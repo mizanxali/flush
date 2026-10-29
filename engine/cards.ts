@@ -10,12 +10,15 @@ export const rankOf = (c: Card) => RANKS.indexOf(c[0])
 export const suitOf = (c: Card) => c[1]
 export const isRed = (c: Card) => c[1] === 'h' || c[1] === 'd'
 export const rankLabel = (c: Card) => (c[0] === 'T' ? '10' : c[0])
-export const suitSymbol = (c: Card) => ({ s: '♠', h: '♥', d: '♦', c: '♣' })[c[1]] ?? '?'
+// U+FE0E asks for the text glyph: Android otherwise draws ♦ and ♠ as emoji.
+export const suitSymbol = (c: Card) => (({ s: '♠', h: '♥', d: '♦', c: '♣' })[c[1]] ?? '?') + '\uFE0E'
 
 /** A fresh deck in a uniformly random order (Fisher–Yates over crypto randomness). */
 export function shuffledDeck(): Card[] {
   const deck = [...RANKS].flatMap(r => [...SUITS].map(s => r + s))
   const buf = new Uint32Array(1)
+  // Browsers and Node have it; React Native gets it from react-native-get-random-values.
+  const { crypto } = globalThis as unknown as { crypto: { getRandomValues(a: Uint32Array): Uint32Array } }
   for (let i = deck.length - 1; i > 0; i--) {
     // Rejection sampling: no modulo bias.
     const limit = Math.floor(0x100000000 / (i + 1)) * (i + 1)

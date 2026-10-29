@@ -55,6 +55,8 @@ export type Config = { name: string; sb: number; bb: number; buyIn: number; turn
 
 export const DEFAULTS = { turnMs: 30_000, nextHandMs: 6_000 }
 
+const clear = (t: ReturnType<typeof setTimeout> | undefined) => t !== undefined && clearTimeout(t)
+
 export function parse(content: string): Msg | null {
   try {
     const m = JSON.parse(content)
@@ -169,8 +171,8 @@ export class Host {
 
   stop() {
     this.running = false
-    clearTimeout(this.turnTimer)
-    clearTimeout(this.nextTimer)
+    clear(this.turnTimer)
+    clear(this.nextTimer)
   }
 
   /** Ends the table for everyone. */
@@ -218,7 +220,7 @@ export class Host {
     const key = `${t.hand}/${t.toAct}/${t.board.length}/${pot(t)}`
     if (key !== this.turnKey) {
       this.turnKey = key
-      clearTimeout(this.turnTimer)
+      clear(this.turnTimer)
       this.deadline = null
       if (t.toAct !== null) {
         const seat = t.seats[t.toAct]!

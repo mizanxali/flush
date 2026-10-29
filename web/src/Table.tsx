@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { evaluate } from '../../engine/cards.ts'
-import { legal, MAX_SEATS, type Action } from '../../engine/game.ts'
-import { DEFAULTS, money, moneyExact, pot, stakes, type SeatView, type View } from '../../engine/session.ts'
+import { MAX_SEATS, type Action } from '../../engine/game.ts'
+import { badgeOf, liveCount, othersOf, outcome, readyCount, seatStatus, sizing, STREET } from '../../engine/display.ts'
+import { DEFAULTS, moneyExact, pot, stakes, type SeatView, type View } from '../../engine/session.ts'
 import { Avatar, Badge, CardBack, PlayingCard, Ring, useSecondsLeft } from './ui'
 
 export type Controls = {
@@ -14,35 +15,9 @@ export type Controls = {
   banner?: string | null
 }
 
-const STREET: Record<string, string> = { preflop: 'Preflop', flop: 'Flop', turn: 'Turn', river: 'River', showdown: 'Showdown', idle: '' }
-
-function badge(v: View, i: number) {
-  if (v.street === 'idle') return null
-  if (i === v.bbSeat) return <Badge kind="BB" />
-  if (i === v.sbSeat) return <Badge kind="SB" />
-  if (i === v.button) return <Badge kind="D" />
-  return null
-}
-
-function status(v: View, i: number, s: SeatView, secs: number | null): string {
-  if (s.left) return 'Left'
-  if (v.toAct === i) return secs === null ? 'Thinking' : `Thinking · ${secs}s`
-  if (v.street === 'showdown' && v.result?.hands[i]) return v.result.hands[i]
-  if (!s.connected) return 'Offline'
-  if (s.stack === 0 && !s.inHand) return 'Out of chips'
-  if (s.sittingOut) return 'Sitting out'
-  if (v.street === 'idle' || v.street === 'showdown') return s.inHand || v.street === 'idle' ? 'Waiting' : s.last === 'Fold' ? 'Folded' : 'Waiting'
-  if (!s.inHand) return s.last === 'Fold' ? 'Folded' : 'Next hand'
-  if (s.allIn) return 'All in'
-  if (s.last && s.bet > 0 && s.last !== 'Check') return `${s.last} · ${money(s.bet)}`
-  return s.last ?? 'Waiting'
-}
-
-function winners(v: View) {
-  const r = v.result!
-  const total = r.pots.reduce((n, p) => n + p.amount, 0)
-  const main = r.pots[0]
-  return { total, main, names: main?.winners.map(w => (w === v.you ? 'You' : v.seats[w]?.name ?? 'Someone')) ?? [] }
+const badge = (v: View, i: number) => {
+  const b = badgeOf(v, i)
+  return b && <Badge kind={b} />
 }
 
 function Opponent({ v, i, s }: { v: View; i: number; s: SeatView }) {
@@ -68,33 +43,19 @@ function Opponent({ v, i, s }: { v: View; i: number; s: SeatView }) {
           <CardBack />
         </div>
       ) : null}
-      <div className="opp-status">{status(v, i, s, secs)}</div>
+      <div className="opp-status">{seatStatus(v, i, s, secs)}</div>
     </div>
   )
 }
 
-function round(x: number, step: number) {
-  return Math.round(x / step) * step
-}
-
 function ActionPanel({ v, c }: { v: View; c: Controls }) {
-  const l = legal(v, v.you)
-  const total = pot(v)
-  const clamp = (x: number) => Math.min(l.maxTo, Math.max(l.minTo, round(x, v.sb)))
-  // A pot-sized raise: call, then raise by the pot as it would stand after the call.
-  const potTo = (f: number) => clamp(v.currentBet + f * (total + l.toCall))
-  const [to, setTo] = useState(() => (l.canRaise ? potTo(0.5) : 0))
+  const l = sizing(v)
+  const { clamp, opening, presets } = l
+  const [to, setTo] = useState(l.initial)
   const [text, setText] = useState('')
   const [open, setOpen] = useState(false) // phones: slider, presets and fold sit behind ↑
   const secs = useSecondsLeft(v.deadline)
-  const opening = v.currentBet === 0
   useEffect(() => setText((to / 100).toFixed(2)), [to])
-  const presets = [
-    ['Min', l.minTo],
-    ['½ pot', potTo(0.5)],
-    ['Pot', potTo(1)],
-    ['All in', l.maxTo],
-  ] as const
   const raiseLabel = to === l.maxTo ? `All in ${moneyExact(to)}` : `${opening ? 'Bet' : 'Raise to'} ${moneyExact(to)}`
   return (
     <div className={`actions ${open ? 'open' : ''}`}>
@@ -166,31 +127,28 @@ function ActionPanel({ v, c }: { v: View; c: Controls }) {
 }
 
 function Result({ v }: { v: View }) {
-  const { total, main, names } = winners(v)
-  const r = v.result!
-  if (!main) return null
-  const youWon = main.winners.includes(v.you)
-  const who = names.length > 1 ? `${names.join(' and ')} split` : youWon ? 'You win' : `${names[0]} wins`
+  if (!v.result?.pots.length) return null
+  const o = outcome(v)
   return (
     <div className="result">
       <div className="result-title win">
-        {who}
-        {main.hand ? ` · ${main.hand}` : ''}
+        {o.who}
+        {o.hand ? ` · ${o.hand}` : ''}
       </div>
       <div className="result-box">
-        {r.showdown ? (
+        {o.showdown ? (
           <>
             <div className="caps muted">Winning hand</div>
-            <div className="result-hand">{main.hand}</div>
-            {main.beats && <div className="muted">Beats {main.beats}</div>}
+            <div className="result-hand">{o.hand}</div>
+            {o.beats && <div className="muted">Beats {o.beats}</div>}
           </>
         ) : (
           <div className="result-hand small-hand">Everyone else folded</div>
         )}
-        <div className="win result-amount">{moneyExact(total)} pot awarded</div>
-        {r.pots.slice(1).map((p, k) => (
+        <div className="win result-amount">{moneyExact(o.total)} pot awarded</div>
+        {o.sidePots.map((p, k) => (
           <div key={k} className="muted small">
-            Side pot {moneyExact(p.amount)} → {p.winners.map(w => (w === v.you ? 'you' : v.seats[w]?.name)).join(', ')}
+            Side pot {moneyExact(p.amount)} → {p.to}
           </div>
         ))}
         <div className="muted small next">Next hand starting…</div>
@@ -222,7 +180,7 @@ function Waiting({ v, c }: { v: View; c: Controls }) {
       </Panel>
     )
   if (v.street === 'idle') {
-    const ready = v.seats.filter(s => s && s.stack > 0 && !s.sittingOut).length
+    const ready = readyCount(v)
     if (!c.start) return <Panel title={v.running ? 'Waiting for players' : 'Waiting for the host to start'} />
     return (
       <Panel title={ready < 2 ? 'Waiting for players to join' : `${ready} players ready`}>
@@ -253,9 +211,9 @@ const Panel = ({ title, children }: { title: string; children?: React.ReactNode 
 
 export function Table({ v, c }: { v: View; c: Controls }) {
   const me = v.seats[v.you]
-  const others = [...Array(MAX_SEATS - 1)].map((_, k) => (v.you + 1 + k) % MAX_SEATS).filter(i => v.seats[i])
+  const others = othersOf(v)
   const seated = v.seats.filter(Boolean).length
-  const live = v.seats.filter(s => s?.inHand).length
+  const live = liveCount(v)
   const myTurn = v.toAct === v.you && v.street !== 'showdown'
   const showdown = v.street === 'showdown' && !!v.result
   const won = showdown && v.result!.pots.some(p => p.winners.includes(v.you))

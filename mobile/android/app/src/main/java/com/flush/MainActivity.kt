@@ -13,6 +13,12 @@ class MainActivity : ReactActivity() {
    */
   override fun getMainComponentName(): String = "Flush"
 
+  // The host phone carries the table (and is the browsers' Bluetooth hub): don't let it lock mid-hand.
+  override fun onCreate(savedInstanceState: android.os.Bundle?) {
+    super.onCreate(savedInstanceState)
+    window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+  }
+
   /**
    * Returns the instance of the [ReactActivityDelegate]. We use [DefaultReactActivityDelegate]
    * which allows you to enable New Architecture with a single boolean flags [fabricEnabled]
