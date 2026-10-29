@@ -197,27 +197,35 @@ input { font: inherit; color: inherit; }
   .caps { font-size: 10px; }
   .chip-btn { padding: 5px 9px; font-size: 12px; }
   .hand-no { display: none; }
-  /* A tall oval: the side seats move toward the corners. */
-  .felt { aspect-ratio: 0.74; max-height: none; min-height: 0; margin: 0 0 22px; }
-  .seat { left: var(--tx); top: var(--ty); padding: 3px 6px; max-width: 112px; gap: 1px; }
-  .seat .avatar { width: 30px; height: 30px; }
-  .seat-name { font-size: 12px; max-width: 100px; }
-  .seat-stack { font-size: 14px; }
+  /* Phones keep the stacked layout: the oval's parts flow in order instead of sitting on the rim. */
+  .table { flex-direction: row; flex-wrap: wrap; justify-content: center; align-content: flex-start; }
+  .table > *, .felt-center, .side, .you, .info { width: 100%; }
+  .felt, .bottom { display: contents; }
+  .rim { display: none; }
+  .seat { position: static; transform: none; width: 33.3%; max-width: none; padding: 12px 4px 4px; gap: 1px; background: none; order: 1; }
+  .seat .avatar { width: 34px; height: 34px; }
+  .seat-name { font-size: 13px; max-width: 100%; }
+  .seat-stack { font-size: 15px; }
   .seat-status { font-size: 11px; }
-  .felt-center { top: 47%; width: 74%; }
-  .pot { font-size: 30px; margin-bottom: 6px; }
-  .board { width: 100%; gap: 4px; }
-  .board .card-lg { flex: 1; width: auto; height: auto; aspect-ratio: 0.72; padding: 5px 6px 6px; border-radius: 6px; }
-  .board .card-lg .card-rank { font-size: clamp(16px, 5.5vw, 26px); }
-  .board .card-lg .card-suit { font-size: clamp(12px, 4.2vw, 20px); }
-  .you { top: 89%; gap: 4px; }
-  .hole .card-lg { width: 66px; height: 92px; padding: 7px 9px; }
-  .hole .card-lg .card-rank { font-size: 30px; }
-  .hole .card-lg .card-suit { font-size: 22px; }
-  .hole .card + .card { margin-left: -18px; }
+  .felt-center { position: static; transform: none; order: 2; flex-direction: row; flex-wrap: wrap; justify-content: flex-end; align-items: baseline; gap: 8px; padding-top: 12px; }
+  .felt-center > .small { width: 100%; text-align: center; order: -2; padding: 12px 0; }
+  .pot { font-size: 30px; margin-bottom: 0; }
+  .board { width: 100%; gap: 6px; order: -1; margin-bottom: 6px; }
+  .board .card-lg { flex: 1; width: auto; height: auto; aspect-ratio: 0.72; padding: 7px 8px 8px; }
+  .board .card-lg .card-rank { font-size: clamp(20px, 7.5vw, 34px); }
+  .board .card-lg .card-suit { font-size: clamp(15px, 5.5vw, 26px); }
+  .side { order: 3; margin-top: 16px; }
+  .you { position: static; transform: none; order: 4; margin-top: 16px; display: grid; grid-template-columns: 1fr 1fr; grid-template-areas: 'hole line' 'hint line'; gap: 8px 14px; padding: 0; background: none; }
+  .hole { grid-area: hole; }
+  .hole .card-lg { width: 60%; height: auto; aspect-ratio: 0.72; padding: 10px 12px; }
+  .hole .card-lg .card-rank { font-size: 40px; }
+  .hole .card-lg .card-suit { font-size: 30px; }
+  .hole .card + .card { margin-left: -20%; }
+  .you-line { grid-area: line; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border: 1px solid var(--line-2); border-radius: 14px; padding: 14px 8px; }
+  .you-stack { font-size: 24px; }
+  .swipe-hint { grid-area: hint; text-align: center; }
+  .info { order: 5; margin-top: 16px; }
   .swipe-hint { display: block; }
-  .bottom { grid-template-columns: 1fr; gap: 16px; }
-  .side { order: -1; }
   .info-title { font-size: 22px; }
   .bet-row { grid-template-columns: 1fr 120px; gap: 10px; }
   .bet-input, .bet-input input { font-size: 18px; padding-top: 5px; padding-bottom: 5px; }
