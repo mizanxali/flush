@@ -6,7 +6,7 @@ import { rollAvatar } from '../engine/avatar.ts';
 import { DEFAULTS, Guest, Host, stakes, type Me } from '../engine/session.ts';
 import { Net } from './src/net';
 import { Table, type Controls } from './src/Table';
-import { Avatar, Btn, C, Chip, F, T } from './src/ui';
+import { Avatar, Btn, C, Chip, F, Logo, T } from './src/ui';
 
 type Profile = Omit<Me, 'id'>;
 type Mode = { k: 'home' } | { k: 'host'; host: Host } | { k: 'join'; guest: Guest };
@@ -107,14 +107,6 @@ export default function App() {
   );
 }
 
-function Logo() {
-  return (
-    <Text style={{ color: C.text, fontSize: 24, fontFamily: F.semibold, letterSpacing: -1.2 }}>
-      <Text style={{ color: C.accent }}>{'♠\uFE0E '}</Text>flush<Text style={{ color: C.accent }}>.</Text>
-    </Text>
-  );
-}
-
 function Home({ me, setMe, onHost, onJoin }: { me: Profile; setMe: (p: Profile) => void; onHost: (name: string, sb: number, bb: number, bbs: number) => void; onJoin: () => void }) {
   const [hosting, setHosting] = useState(false);
   const [name, setName] = useState('');
@@ -136,8 +128,8 @@ function Home({ me, setMe, onHost, onJoin }: { me: Profile; setMe: (p: Profile) 
       <Text style={[T.text, { fontSize: 24, lineHeight: 30 }]}>No-limit hold'em with the people in the room. No internet needed.</Text>
       {!hosting ? (
         <View style={{ gap: 12 }}>
-          <Btn primary title="Host a table" sub="Deal from this phone" onPress={() => setHosting(true)} />
-          <Btn title="Join a table" sub="Find tables nearby" onPress={onJoin} />
+          <Btn primary title="Host a table" onPress={() => setHosting(true)} />
+          <Btn title="Join a table" onPress={onJoin} />
         </View>
       ) : (
         <View style={{ gap: 10 }}>
@@ -159,7 +151,7 @@ function Home({ me, setMe, onHost, onJoin }: { me: Profile; setMe: (p: Profile) 
               </Chip>
             ))}
           </View>
-          <Btn primary title="Open the table" sub="Players can join once it's open" onPress={() => onHost(name.trim() || `${me.name}'s table`, STAKES[stake][0], STAKES[stake][1], bbs)} />
+          <Btn primary title="Open the table" onPress={() => onHost(name.trim() || `${me.name}'s table`, STAKES[stake][0], STAKES[stake][1], bbs)} />
           <Btn title="Back" onPress={() => setHosting(false)} />
           <Text style={T.muted}>Phones nearby join over Bluetooth or Wi-Fi. Browsers (Chrome) join by picking this phone. Keep flush open while you host.</Text>
         </View>

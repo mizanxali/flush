@@ -203,7 +203,7 @@ function Waiting({ v, c }: { v: View; c: Controls }) {
         </button>
       </Panel>
     )
-  if (me.sittingOut)
+  if (me.sittingOut && !me.inHand)
     return (
       <Panel title="You're sitting out">
         <button className="btn btn-primary wide" onClick={() => c.sit(false)}>

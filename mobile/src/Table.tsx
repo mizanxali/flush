@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { PanResponder, Pressable, StyleSheet, Text, View } from 'react-native';
-import { evaluate } from '../../engine/cards.ts';
-import { badgeOf, liveCount, othersOf, outcome, readyCount, seatStatus, sizing, STREET } from '../../engine/display.ts';
+import { evaluate, rankLabel, suitSymbol } from '../../engine/cards.ts';
+import { badgeOf, liveCount, logLine, othersOf, outcome, readyCount, seatStatus, sizing, STREET } from '../../engine/display.ts';
 import { MAX_SEATS, type Action } from '../../engine/game.ts';
 import { moneyExact, pot, stakes, type SeatView, type View as TableView } from '../../engine/session.ts';
 import { Avatar, Badge, Btn, C, CardBack, Chip, F, PlayingCard, T, useSecondsLeft } from './ui';
@@ -15,33 +15,32 @@ export type Controls = {
   banner?: string | null;
 };
 
-function Opponent({ v, i, s }: { v: TableView; i: number; s: SeatView }) {
+const cardText = (cards: string[]) => cards.map(c => rankLabel(c) + suitSymbol(c)).join(' ');
+
+/** A seat: its cards peek over a small plate with the avatar, name and stack. */
+function Seat({ v, i, s }: { v: TableView; i: number; s: SeatView }) {
   const secs = useSecondsLeft(v.toAct === i ? v.deadline : null);
   const out = !s.inHand && v.street !== 'idle';
+  const turn = v.toAct === i;
   const won = v.street === 'showdown' && v.result?.pots.some(p => p.winners.includes(i));
   return (
-    <View style={st.opp}>
-      <Avatar seed={s.avatar} size={36} dim={out || !s.connected} />
-      <View style={st.row}>
-        <Text style={[T.text, { fontSize: 13, color: out ? C.dim : C.text }]} numberOfLines={1}>
-          {s.name}
-        </Text>
-        <Badge kind={badgeOf(v, i)} />
+    <View style={st.seat}>
+      <View style={st.seatCards}>
+        {s.cards ? s.cards.map(c => <PlayingCard key={c} card={c} tiny />) : s.hasCards && v.street !== 'showdown' ? [<CardBack key="a" />, <CardBack key="b" />] : null}
       </View>
-      <Text style={[T.text, { color: won ? C.win : out ? C.dim : C.text }]}>{moneyExact(s.stack)}</Text>
-      {s.cards ? (
-        <View style={st.row}>
-          {s.cards.map(c => (
-            <PlayingCard key={c} card={c} tiny style={{ marginHorizontal: 1 }} />
-          ))}
+      <View style={[st.plate, out && { opacity: 0.45 }, turn && { borderColor: C.accent }, won && { borderColor: C.win }]}>
+        <Avatar seed={s.avatar} size={26} dim={!s.connected} />
+        <View style={{ flex: 1, minWidth: 0 }}>
+          <View style={st.row}>
+            <Text style={[T.muted, { fontSize: 12, flexShrink: 1 }]} numberOfLines={1}>
+              {s.name}
+            </Text>
+            <Badge kind={badgeOf(v, i)} />
+          </View>
+          <Text style={[T.text, { fontSize: 14 }, won && T.win]}>{moneyExact(s.stack)}</Text>
         </View>
-      ) : s.hasCards && v.street !== 'showdown' ? (
-        <View style={[st.row, { gap: 2 }]}>
-          <CardBack />
-          <CardBack />
-        </View>
-      ) : null}
-      <Text style={[T.muted, { fontSize: 11, color: v.toAct === i ? C.accent : out ? C.dim : C.muted }]} numberOfLines={1}>
+      </View>
+      <Text style={[T.muted, { fontSize: 11, marginTop: 3, color: turn ? C.accent : out ? C.dim : C.muted }]} numberOfLines={1}>
         {seatStatus(v, i, s, secs)}
       </Text>
     </View>
@@ -55,9 +54,12 @@ function Actions({ v, c }: { v: TableView; c: Controls }) {
   const secs = useSecondsLeft(v.deadline);
   const me = v.seats[v.you]!;
   const raise = to === z.maxTo ? `All in ${moneyExact(to)}` : `${z.opening ? 'Bet' : 'Raise to'} ${moneyExact(to)}`;
+  // Equal preset amounts share one choice.
+  const presets = new Map<number, string[]>();
+  for (const [label, amount] of z.presets) presets.set(amount, [...(presets.get(amount) ?? []), label]);
   return (
     <View style={{ gap: 10 }}>
-      <Text style={T.muted}>{secs === null ? 'Your move' : `Turn remaining · ${secs}s`}</Text>
+      <Text style={T.muted}>{secs === null ? 'Your move' : `Your move · ${secs}s`}</Text>
       {open && z.canRaise && (
         <>
           <View style={st.row}>
@@ -65,11 +67,10 @@ function Actions({ v, c }: { v: TableView; c: Controls }) {
             <Text style={[T.text, { flex: 1, textAlign: 'center', fontSize: 24 }]}>{moneyExact(to)}</Text>
             <Btn title="+" onPress={() => setTo(z.clamp(to + v.bb))} style={st.step} />
           </View>
-          <View style={st.presets}>
-            {z.presets.map(([label, amount]) => (
-              <Pressable key={label} onPress={() => setTo(amount)} style={[st.preset, to === amount && { borderColor: C.accent }]}>
-                <Text style={[T.muted, to === amount && { color: C.text }]}>{label}</Text>
-                <Text style={T.text}>{moneyExact(amount)}</Text>
+          <View style={[st.row, { justifyContent: 'space-between' }]}>
+            {[...presets].map(([amount, labels]) => (
+              <Pressable key={amount} onPress={() => setTo(amount)} hitSlop={8} accessibilityRole="button">
+                <Text style={[T.muted, to === amount && { color: C.accent }]}>{labels.join(' · ')}</Text>
               </Pressable>
             ))}
           </View>
@@ -84,37 +85,7 @@ function Actions({ v, c }: { v: TableView; c: Controls }) {
         {z.canRaise && <Btn title={raise} primary onPress={() => c.act({ type: 'raise', to })} style={{ flex: 1.2 }} />}
         <Btn title={open ? '↓' : '↑'} onPress={() => setOpen(!open)} style={{ width: 54, paddingHorizontal: 0 }} />
       </View>
-      {open && <Btn title="Fold" sub="Give up this hand" onPress={() => c.act({ type: 'fold' })} />}
-    </View>
-  );
-}
-
-function Result({ v }: { v: TableView }) {
-  if (!v.result?.pots.length) return null;
-  const o = outcome(v);
-  return (
-    <View style={{ gap: 8 }}>
-      <Text style={[T.text, T.win, { fontSize: 16 }]}>
-        {o.who}
-        {o.hand ? ` · ${o.hand}` : ''}
-      </Text>
-      <View style={st.box}>
-        {o.showdown ? (
-          <>
-            <Text style={T.caps}>Winning hand</Text>
-            <Text style={[T.text, { fontSize: 28, fontFamily: F.medium, letterSpacing: -0.8 }]}>{o.hand}</Text>
-            {o.beats ? <Text style={T.muted}>Beats {o.beats}</Text> : null}
-          </>
-        ) : (
-          <Text style={[T.text, { fontSize: 20 }]}>Everyone else folded</Text>
-        )}
-        <Text style={[T.text, T.win]}>{moneyExact(o.total)} pot awarded</Text>
-        {o.sidePots.map((p, k) => (
-          <Text key={k} style={T.muted}>
-            Side pot {moneyExact(p.amount)} → {p.to}
-          </Text>
-        ))}
-      </View>
+      {open && <Btn title="Fold" onPress={() => c.act({ type: 'fold' })} />}
     </View>
   );
 }
@@ -123,8 +94,30 @@ function Waiting({ v, c }: { v: TableView; c: Controls }) {
   const me = v.seats[v.you]!;
   const turn = v.toAct !== null ? v.seats[v.toAct] : null;
   const secs = useSecondsLeft(v.deadline);
-  if (me.stack === 0 && !me.inHand) return <Btn primary title={`Rebuy ${moneyExact(v.buyIn)}`} sub="You're out of chips" onPress={c.rebuy} />;
-  if (me.sittingOut) return <Btn primary title="I'm back" sub="You're sitting out. Deal me in next hand" onPress={() => c.sit(false)} />;
+  if (v.street === 'showdown' && v.result?.pots.length) {
+    const o = outcome(v);
+    return (
+      <Text style={[T.text, T.win, { fontSize: 16, fontFamily: F.medium }]} numberOfLines={2}>
+        {o.who} {moneyExact(o.total)}
+        {o.hand ? ` with ${o.hand.toLowerCase()}` : ''}
+        {o.beats ? <Text style={T.muted}>{`, beating ${o.beats}`}</Text> : null}
+      </Text>
+    );
+  }
+  if (me.stack === 0 && !me.inHand)
+    return (
+      <View style={{ gap: 8 }}>
+        <Text style={T.text}>You're out of chips</Text>
+        <Btn primary title={`Rebuy ${moneyExact(v.buyIn)}`} onPress={c.rebuy} />
+      </View>
+    );
+  if (me.sittingOut && !me.inHand)
+    return (
+      <View style={{ gap: 8 }}>
+        <Text style={T.text}>You're sitting out</Text>
+        <Btn primary title="Deal me in" onPress={() => c.sit(false)} />
+      </View>
+    );
   if (v.street === 'idle') {
     const ready = readyCount(v);
     if (!c.start) return <Text style={T.text}>{v.running ? 'Waiting for players' : 'Waiting for the host to start'}</Text>;
@@ -132,7 +125,7 @@ function Waiting({ v, c }: { v: TableView; c: Controls }) {
       <View style={{ gap: 10 }}>
         <Text style={T.text}>{ready < 2 ? 'Waiting for players to join' : `${ready} players ready`}</Text>
         <Text style={T.muted}>Phones nearby join from their Join screen. Browsers join by picking this phone under Join → Connect to a phone.</Text>
-        {!v.running && <Btn primary title="Start the game" sub={ready < 2 ? 'Needs two players' : 'Deal the first hand'} disabled={ready < 2} onPress={c.start} />}
+        {!v.running && <Btn primary title={ready < 2 ? 'Start once two are seated' : 'Start the game'} disabled={ready < 2} onPress={c.start} />}
       </View>
     );
   }
@@ -141,6 +134,21 @@ function Waiting({ v, c }: { v: TableView; c: Controls }) {
       {turn ? `Waiting for ${turn.name}${secs !== null ? ` · ${secs}s` : ''}` : 'Waiting'}
       {!me.inHand ? '. You folded; you are in again next hand.' : ''}
     </Text>
+  );
+}
+
+/** What has happened this hand, newest at the bottom, in whatever room the screen has. */
+function HandLog({ v }: { v: TableView }) {
+  if (!v.log.length) return null;
+  return (
+    <View style={{ gap: 2 }}>
+      <Text style={[T.caps, { marginBottom: 2 }]}>Hand {v.hand}</Text>
+      {v.log.slice(-5).map((e, k, shown) => (
+        <Text key={v.log.length - shown.length + k} style={[T.muted, k === shown.length - 1 && { color: C.text }, e.kind === 'win' && T.win]} numberOfLines={1}>
+          {logLine(v, e, cardText)}
+        </Text>
+      ))}
+    </View>
   );
 }
 
@@ -182,49 +190,55 @@ export function Table({ v, c }: { v: TableView; c: Controls }) {
         {me && !me.sittingOut && me.stack > 0 && <Chip onPress={() => c.sit(true)}>Sit out</Chip>}
       </View>
 
-      <View style={st.opps}>
+      <View style={st.seats}>
         {othersOf(v).map(i => (
-          <Opponent key={v.seats[i]!.id} v={v} i={i} s={v.seats[i]!} />
+          <Seat key={v.seats[i]!.id} v={v} i={i} s={v.seats[i]!} />
         ))}
         {othersOf(v).length === 0 && <Text style={[T.muted, { paddingVertical: 24 }]}>Nobody else is here yet</Text>}
       </View>
 
-      <View style={[st.row, { gap: 6, marginTop: 6 }]}>
+      <View style={[st.row, { gap: 6, marginTop: 10 }]}>
         {[0, 1, 2, 3, 4].map(k => (
           <PlayingCard key={k} card={v.board[k] ?? null} style={{ flex: 1 }} />
         ))}
       </View>
-      <View style={[st.row, { justifyContent: 'flex-end', alignItems: 'baseline', gap: 8, marginTop: 10 }]}>
-        <Text style={T.muted}>{showdown ? 'Pot awarded' : 'Total pot'}</Text>
-        <Text style={[T.text, { fontSize: 30 }, showdown && T.win]}>{moneyExact(total)}</Text>
-      </View>
-      <View style={[st.row, { justifyContent: 'space-between' }]}>
+      <View style={[st.row, { justifyContent: 'space-between', alignItems: 'baseline', marginTop: 10 }]}>
         <Text style={T.muted}>{showdown ? (v.result!.showdown ? 'Showdown' : 'Hand complete') : v.street === 'idle' ? '' : `${STREET[v.street]} · ${live === 2 ? 'heads up' : `${live} players`}`}</Text>
-        <Text style={T.muted}>{v.hand > 0 ? `Hand ${v.hand}` : ''}</Text>
+        <View style={[st.row, { alignItems: 'baseline', gap: 8 }]}>
+          <Text style={T.muted}>{showdown ? 'Pot awarded' : 'Pot'}</Text>
+          <Text style={[T.text, { fontSize: 28 }, showdown && T.win]}>{moneyExact(total)}</Text>
+        </View>
       </View>
 
-      <View style={{ flex: 1, minHeight: 12 }} />
-      <View style={{ marginBottom: 14 }}>{showdown ? <Result v={v} /> : myTurn ? <Actions key={`${v.hand}/${v.board.length}/${v.currentBet}`} v={v} c={c} /> : me ? <Waiting v={v} c={c} /> : null}</View>
+      <View style={{ flex: 1, minHeight: 0, justifyContent: 'flex-end', overflow: 'hidden', paddingVertical: 8 }}>
+        <HandLog v={v} />
+      </View>
+      <View style={{ marginBottom: 14 }}>{myTurn ? <Actions key={`${v.hand}/${v.board.length}/${v.currentBet}`} v={v} c={c} /> : me ? <Waiting v={v} c={c} /> : null}</View>
 
       {me && (
-        <View style={[st.row, { gap: 14, alignItems: 'stretch' }]}>
+        <View style={[st.row, { gap: 14, alignItems: 'center' }]}>
           <View style={{ flex: 1 }} {...swipe.panHandlers}>
-            <View style={[st.row, !v.hole.length && { flex: 1, justifyContent: 'center' }]}>
+            <View style={[st.row, !v.hole.length && { height: 120, justifyContent: 'center' }]}>
               {v.hole.length ? (
-                v.hole.map((card, k) => <PlayingCard key={card} card={card} big style={[{ width: '62%' }, k ? st.overlap : null]} />)
+                v.hole.map((card, k) => <PlayingCard key={card} card={card} style={[{ width: '52%' }, k ? st.overlap : null]} />)
               ) : (
                 <Text style={[T.muted, { textAlign: 'center' }]}>No cards yet</Text>
               )}
             </View>
             {myTurn ? <Text style={[T.muted, { textAlign: 'center', marginTop: 8 }]}>↑ Swipe up to fold</Text> : null}
           </View>
-          <View style={[st.box, { flex: 1, alignItems: 'center', justifyContent: 'center' }, won && { borderColor: '#2f6d62' }]}>
-            <View style={st.row}>
-              <Text style={[T.muted, won && T.win]}>{myHand ?? 'You'}</Text>
-              <Badge kind={badgeOf(v, v.you)} />
+          <View style={{ flex: 1, gap: 8 }}>
+            <View style={[st.plate, { padding: 10 }, myTurn && { borderColor: C.accent }, won && { borderColor: C.win }]}>
+              <Avatar seed={me.avatar} size={34} />
+              <View style={{ flex: 1 }}>
+                <View style={st.row}>
+                  <Text style={T.muted}>You</Text>
+                  <Badge kind={badgeOf(v, v.you)} />
+                </View>
+                <Text style={[T.text, { fontSize: 22 }, won && T.win]}>{moneyExact(me.stack)}</Text>
+              </View>
             </View>
-            <Avatar seed={me.avatar} size={44} />
-            <Text style={[T.text, { fontSize: 24 }]}>{moneyExact(me.stack)}</Text>
+            {myHand && <Text style={[T.muted, { textAlign: 'center' }, won && T.win]}>{myHand}</Text>}
           </View>
         </View>
       )}
@@ -234,12 +248,11 @@ export function Table({ v, c }: { v: TableView; c: Controls }) {
 
 const st = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center' },
-  opps: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', rowGap: 12, paddingVertical: 8 },
-  opp: { width: '33.3%', alignItems: 'center', gap: 2 },
-  box: { borderWidth: 1, borderColor: C.line2, borderRadius: 8, padding: 14, gap: 6 },
-  presets: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
-  preset: { width: '48.8%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderColor: C.line2, borderRadius: 5, padding: 10 },
+  seats: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', rowGap: 4, paddingTop: 2 },
+  seat: { width: '33.3%', alignItems: 'center', paddingHorizontal: 3 },
+  seatCards: { flexDirection: 'row', gap: 2, height: 31, alignItems: 'flex-end', marginBottom: -8, zIndex: 1 },
+  plate: { flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'stretch', padding: 5, backgroundColor: '#181818', borderWidth: 1, borderColor: C.line2, borderRadius: 8 },
   step: { width: 54, paddingHorizontal: 0 },
-  overlap: { marginLeft: '-24%', borderLeftWidth: 1, borderLeftColor: '#d6d6d6', shadowColor: '#000', shadowOpacity: 0.25, shadowRadius: 6, shadowOffset: { width: -3, height: 0 }, elevation: 4 },
+  overlap: { marginLeft: '-20%', borderLeftWidth: 1, borderLeftColor: '#d6d6d6', shadowColor: '#000', shadowOpacity: 0.25, shadowRadius: 6, shadowOffset: { width: -3, height: 0 }, elevation: 4 },
   banner: { backgroundColor: '#2e2410', color: '#f3cf8a', fontFamily: F.regular, padding: 10, borderRadius: 6, marginTop: 8, overflow: 'hidden' },
 });
