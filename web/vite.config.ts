@@ -10,10 +10,10 @@ function serviceWorker(): Plugin {
     name: 'flush-sw',
     apply: 'build',
     closeBundle() {
-      const dist = join(__dirname, 'dist')
+      const dist = join(import.meta.dirname, 'dist')
       const walk = (dir: string): string[] => readdirSync(dir, { withFileTypes: true }).flatMap(e => (e.isDirectory() ? walk(join(dir, e.name)) : [join(dir, e.name)]))
       const files = walk(dist).filter(f => !f.endsWith('sw.js') && !f.endsWith('.d.ts'))
-      const template = readFileSync(join(__dirname, 'sw.js'), 'utf8')
+      const template = readFileSync(join(import.meta.dirname, 'sw.js'), 'utf8')
       const hash = createHash('sha256').update(template)
       for (const f of files.sort()) hash.update(f).update(readFileSync(f))
       const assets = files.map(f => '/' + relative(dist, f).split('\\').join('/'))

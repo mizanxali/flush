@@ -30,6 +30,8 @@ export class Net implements Send {
   private constructor(p: OfflineProtocol) {
     this.p = p;
     p.on('all', (e: ProtocolEvent) => {
+      if (e.type === 'neighbor_discovered' || e.type === 'neighbor_lost' || e.type === 'secure_session_established' || e.type === 'message_failed')
+        console.log('[flush]', e.type, JSON.stringify(e));
       if (e.type === 'neighbor_discovered') {
         if (this.peers.has(e.peer_id)) return;
         this.peers.add(e.peer_id);
@@ -39,6 +41,7 @@ export class Net implements Send {
         this.listener?.peerDown(e.peer_id);
       } else if (e.type === 'message_received') {
         const m = parse(e.content);
+        console.log('[flush] message', e.sender.slice(0, 12), m?.t, this.listener ? '' : '(no listener)');
         if (m) this.listener?.message(e.sender, m);
       }
     });

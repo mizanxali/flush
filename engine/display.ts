@@ -21,7 +21,7 @@ export function seatStatus(v: View, i: number, s: SeatView, secs: number | null)
   if (s.stack === 0 && !s.inHand) return 'Out of chips'
   if (s.sittingOut) return 'Sitting out'
   if (v.street === 'idle') return 'Waiting'
-  if (v.street === 'showdown') return s.inHand ? 'Takes the pot' : s.last === 'Fold' ? 'Folded' : ''
+  if (v.street === 'showdown') return s.inHand ? 'Takes the pot' : s.last === 'Fold' ? 'Folded' : 'Next hand'
   if (!s.inHand) return s.last === 'Fold' ? 'Folded' : 'Next hand'
   if (s.allIn) return 'All in'
   if (s.last && s.bet > 0 && s.last !== 'Check') return `${s.last} · ${money(s.bet)}`
