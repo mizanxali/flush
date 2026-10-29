@@ -19,7 +19,7 @@ export function seatStatus(v: View, i: number, s: SeatView, secs: number | null)
   if (v.street === 'showdown' && v.result?.hands[i]) return v.result.hands[i]
   if (!s.connected) return 'Offline'
   if (s.stack === 0 && !s.inHand) return 'Out of chips'
-  if (s.sittingOut) return 'Sitting out'
+  if (s.sittingOut && !s.inHand) return 'Sitting out' // asked mid-hand: plays this one out
   if (v.street === 'idle') return 'Waiting'
   if (v.street === 'showdown') return s.inHand ? 'Takes the pot' : s.last === 'Fold' ? 'Folded' : 'Next hand'
   if (!s.inHand) return s.last === 'Fold' ? 'Folded' : 'Next hand'

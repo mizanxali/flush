@@ -129,11 +129,9 @@ function Home({ me, setMe, onHost, onJoin }: { me: Omit<Me, 'id'>; setMe: (m: Om
         <div className="home-actions">
           <button className="btn btn-primary" onClick={() => setHosting(true)}>
             <b>Host a table</b>
-            <small>Deal from this device</small>
           </button>
           <button className="btn" onClick={onJoin}>
             <b>Join a table</b>
-            <small>Connect to a phone or a browser</small>
           </button>
         </div>
       ) : (
@@ -164,7 +162,6 @@ function Home({ me, setMe, onHost, onJoin }: { me: Omit<Me, 'id'>; setMe: (m: Om
             </button>
             <button className="btn btn-primary" onClick={() => onHost(name.trim() || `${me.name}'s table`, STAKES[stake][0], STAKES[stake][1], bbs)}>
               <b>Open the table</b>
-              <small>Players can join once it's open</small>
             </button>
           </div>
           <p className="muted small">
@@ -218,22 +215,16 @@ function JoinScreen({ net, guest, onBack, onCode }: { net: Net; guest: Guest; on
         ))}
       </div>
       <div className="home-actions">
-        {net.ble ? (
-          <button className="btn" onClick={linkPhone}>
-            <b>Connect to a phone</b>
-            <small>Over Bluetooth, when the host is on the app</small>
-          </button>
-        ) : (
-          <div className="btn disabled-note">
-            <b>Bluetooth isn't available here</b>
-            <small>Use Chrome on a computer or Android to join a phone's table</small>
-          </div>
-        )}
+        <button className="btn" onClick={linkPhone} disabled={!net.ble}>
+          <b>Connect to a phone</b>
+        </button>
         <button className="btn" onClick={onCode}>
           <b>Join with a code</b>
-          <small>When the host is a browser on this Wi-Fi</small>
         </button>
       </div>
+      <p className="muted small">
+        {net.ble ? 'Host on the flush app? Connect to their phone over Bluetooth.' : "This browser has no Bluetooth: to join a phone's table, use Chrome on a computer or Android."} Host in a browser on this Wi-Fi? Join with the code on their screen.
+      </p>
       {linking && <p className="muted small">{linking}</p>}
     </div>
   )

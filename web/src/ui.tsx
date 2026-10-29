@@ -1,17 +1,16 @@
 import { memo, useEffect, useMemo, useState } from 'react'
 import { Avatar as DiceAvatar, Style } from '@dicebear/core'
 import avataaars from '@dicebear/styles/avataaars.json'
+import { LOGO_MARK } from '../../engine/brand.ts'
 import { isRed, rankLabel, suitSymbol, type Card } from '../../engine/cards.ts'
+
+const mark = 'data:image/svg+xml;utf8,' + encodeURIComponent(LOGO_MARK)
 
 export function Logo() {
   return (
     <span className="logo">
-      <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden>
-        <path fill="var(--accent)" d="M12 2C9 6 4 8.5 4 13a4.5 4.5 0 0 0 7 3.7L10 22h4l-1-5.3A4.5 4.5 0 0 0 20 13c0-4.5-5-7-8-11Z" />
-      </svg>
-      <span>
-        flush<span className="logo-dot">.</span>
-      </span>
+      <img src={mark} width="26" height="24" alt="" />
+      flush
     </span>
   )
 }
@@ -24,12 +23,20 @@ export const Avatar = memo(function Avatar({ seed, size = 48, dim = false }: { s
   return <img className="avatar" src={src} width={size} height={size} alt="" style={{ opacity: dim ? 0.45 : 1 }} />
 })
 
+/** A classic face: rank and suit in two opposite corners, one large pip in the middle. The tiny size shows the index only. */
 export function PlayingCard({ card, size = 'md', className = '' }: { card: Card | null; size?: 'xs' | 'sm' | 'md' | 'lg'; className?: string }) {
   if (!card) return <div className={`card card-${size} card-empty ${className}`} />
+  const index = (
+    <span className="idx">
+      <b>{rankLabel(card)}</b>
+      <i>{suitSymbol(card)}</i>
+    </span>
+  )
   return (
     <div className={`card card-${size} ${isRed(card) ? 'red' : ''} ${className}`} aria-label={card}>
-      <span className="card-rank">{rankLabel(card)}</span>
-      <span className="card-suit">{suitSymbol(card)}</span>
+      {index}
+      {size !== 'xs' && <span className="pip">{suitSymbol(card)}</span>}
+      {size !== 'xs' && <span className="idx idx-flip">{index.props.children}</span>}
     </div>
   )
 }

@@ -54,7 +54,7 @@ function Read({ onCode, label }: { onCode: (code: string) => void; label: string
   return (
     <div className="read">
       <div className="muted small">{label}</div>
-      {camera ? <video ref={video} className="scanner" muted playsInline /> : canScan && <button className="btn wide" onClick={() => setCamera(true)}><b>Scan with camera</b><small>Point it at the other screen</small></button>}
+      {camera ? <video ref={video} className="scanner" muted playsInline /> : canScan && <button className="btn wide" onClick={() => setCamera(true)}><b>Scan with the camera</b></button>}
       <div className="paste">
         <input placeholder="…or paste the code" value={text} onChange={e => setText(e.target.value)} />
         <button className="chip-btn" disabled={!text.trim()} onClick={() => onCode(text.trim())}>
