@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { PanResponder, Pressable, StyleSheet, Text, View } from 'react-native';
-import { evaluate, rankLabel, suitSymbol } from '../../engine/cards.ts';
-import { badgeOf, liveCount, logLine, othersOf, outcome, readyCount, seatStatus, sizing, STREET } from '../../engine/display.ts';
+import { evaluate } from '../../engine/cards.ts';
+import { badgeOf, liveCount, othersOf, outcome, readyCount, seatStatus, sizing, STREET } from '../../engine/display.ts';
 import { MAX_SEATS, type Action } from '../../engine/game.ts';
 import { moneyExact, pot, stakes, type SeatView, type View as TableView } from '../../engine/session.ts';
 import { Avatar, Badge, Btn, C, CardBack, Chip, F, PlayingCard, T, useSecondsLeft } from './ui';
@@ -14,8 +14,6 @@ export type Controls = {
   start?: () => void; // host only
   banner?: string | null;
 };
-
-const cardText = (cards: string[]) => cards.map(c => rankLabel(c) + suitSymbol(c)).join(' ');
 
 /** A seat: its cards peek over a small plate with the avatar, name and stack. */
 function Seat({ v, i, s }: { v: TableView; i: number; s: SeatView }) {
@@ -137,21 +135,6 @@ function Waiting({ v, c }: { v: TableView; c: Controls }) {
   );
 }
 
-/** What has happened this hand, newest at the bottom, in whatever room the screen has. */
-function HandLog({ v }: { v: TableView }) {
-  if (!v.log.length) return null;
-  return (
-    <View style={{ gap: 2 }}>
-      <Text style={[T.caps, { marginBottom: 2 }]}>Hand {v.hand}</Text>
-      {v.log.slice(-5).map((e, k, shown) => (
-        <Text key={v.log.length - shown.length + k} style={[T.muted, k === shown.length - 1 && { color: C.text }, e.kind === 'win' && T.win]} numberOfLines={1}>
-          {logLine(v, e, cardText)}
-        </Text>
-      ))}
-    </View>
-  );
-}
-
 export function Table({ v, c }: { v: TableView; c: Controls }) {
   const me = v.seats[v.you];
   const live = liveCount(v);
@@ -210,9 +193,7 @@ export function Table({ v, c }: { v: TableView; c: Controls }) {
         </View>
       </View>
 
-      <View style={{ flex: 1, minHeight: 0, justifyContent: 'flex-end', overflow: 'hidden', paddingVertical: 8 }}>
-        <HandLog v={v} />
-      </View>
+      <View style={{ flex: 1, minHeight: 12 }} />
       <View style={{ marginBottom: 14 }}>{myTurn ? <Actions key={`${v.hand}/${v.board.length}/${v.currentBet}`} v={v} c={c} /> : me ? <Waiting v={v} c={c} /> : null}</View>
 
       {me && (

@@ -1,5 +1,5 @@
 // What the table screens show, shared by the web and phone apps.
-import { legal, MAX_SEATS, type LogEntry } from './game.ts'
+import { legal, MAX_SEATS } from './game.ts'
 import { money, pot, type SeatView, type View } from './session.ts'
 
 export const STREET: Record<string, string> = { preflop: 'Preflop', flop: 'Flop', turn: 'Turn', river: 'River', showdown: 'Showdown', idle: '' }
@@ -82,31 +82,3 @@ export function seatSpot(v: View, i: number, tall: boolean) {
 
 /** The oval's radii, in percent of the table area's width and height. */
 export const RIM = { rx: 41, ry: 40 }
-
-const VERB: Record<string, [string, string]> = {
-  blind: ['post', 'posts'],
-  fold: ['fold', 'folds'],
-  check: ['check', 'checks'],
-  call: ['call', 'calls'],
-  bet: ['bet', 'bets'],
-  raise: ['raise to', 'raises to'],
-  allin: ['go all in for', 'goes all in for'],
-  return: ['take back', 'takes back'],
-  win: ['win', 'wins'],
-}
-
-/** One hand-history line, in the viewer's words: "You call $2", "Mika raises to $8". `cards` joins a board line. */
-export function logLine(v: View, e: LogEntry, cards: (c: string[]) => string): string {
-  if (e.kind === 'board') {
-    // Name the street by where these cards sit on the board; several at once past the flop is a run-out.
-    const at = v.board.indexOf(e.cards![0])
-    const name = at === 0 && e.cards!.length === 3 ? 'Flop' : at === 3 && e.cards!.length === 1 ? 'Turn' : at === 4 ? 'River' : 'Run out'
-    return `${name} ${cards(e.cards!)}`
-  }
-  const you = e.seat === v.you
-  const who = you ? 'You' : (v.seats[e.seat!]?.name ?? 'Someone')
-  const verb = VERB[e.kind][you ? 0 : 1]
-  const amount = e.amount !== undefined ? ` ${money(e.amount)}` : ''
-  const hand = e.kind === 'win' && e.hand ? ` with ${e.hand.toLowerCase()}` : ''
-  return `${who} ${verb}${amount}${hand}`
-}

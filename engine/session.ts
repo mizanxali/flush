@@ -1,7 +1,7 @@
 // The table protocol over direct, encrypted SDK messages. The host runs the Table and sends each
 // player their own view (public state plus their hole cards); players send actions back.
 import type { Card } from './cards.ts'
-import { act, canStart, endHand, leave, legal, MAX_SEATS, newTable, sit, startHand, type Action, type LogEntry, type Result, type Seat, type Street, type Table } from './game.ts'
+import { act, canStart, endHand, leave, legal, MAX_SEATS, newTable, sit, startHand, type Action, type Result, type Seat, type Street, type Table } from './game.ts'
 
 export type SeatView = Omit<Seat, 'hole'> & { cards: Card[] | null; hasCards: boolean }
 
@@ -24,7 +24,6 @@ export type View = {
   minRaise: number
   seats: (SeatView | null)[]
   result: Result | null
-  log: LogEntry[] // the latest lines of this hand
   running: boolean
   you: number // -1 when not seated
   hole: Card[]
@@ -267,7 +266,6 @@ export class Host {
         return { ...rest, hasCards: s.inHand && hole.length > 0, cards: reveal && s.inHand ? hole : null }
       }),
       result: t.result,
-      log: t.log.slice(-14),
       running: this.running,
       you: i,
       hole: i >= 0 ? t.seats[i]!.hole : [],

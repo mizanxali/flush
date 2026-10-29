@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
-import { evaluate, rankLabel, suitSymbol } from '../../engine/cards.ts'
+import { evaluate } from '../../engine/cards.ts'
 import { MAX_SEATS, type Action } from '../../engine/game.ts'
-import { badgeOf, liveCount, logLine, othersOf, outcome, readyCount, seatSpot, seatStatus, sizing, STREET } from '../../engine/display.ts'
+import { badgeOf, liveCount, othersOf, outcome, readyCount, seatSpot, seatStatus, sizing, STREET } from '../../engine/display.ts'
 import { DEFAULTS, moneyExact, pot, stakes, type SeatView, type View } from '../../engine/session.ts'
 import { Avatar, Badge, CardBack, PlayingCard, useSecondsLeft } from './ui'
 
@@ -19,8 +19,6 @@ const badge = (v: View, i: number) => {
   const b = badgeOf(v, i)
   return b && <Badge kind={b} />
 }
-
-const cardText = (cards: string[]) => cards.map(c => rankLabel(c) + suitSymbol(c)).join(' ')
 
 /** Both layouts' positions as CSS variables; the stylesheet picks one per screen shape. */
 function spotStyle(v: View, i: number): CSSProperties {
@@ -162,23 +160,32 @@ function ActionPanel({ v, c }: { v: View; c: Controls }) {
   )
 }
 
-/** The left column: what has happened this hand, newest last. Wins stand out. */
-function HandLog({ v }: { v: View }) {
-  const list = useRef<HTMLOListElement>(null)
-  useEffect(() => {
-    const el = list.current
-    if (el) el.scrollTop = el.scrollHeight
-  }, [v.log.length])
+function Result({ v }: { v: View }) {
+  const o = outcome(v)
   return (
-    <div className="log">
-      <div className="caps muted">{v.hand > 0 ? `Hand ${v.hand}` : 'No hands yet'}</div>
-      <ol ref={list}>
-        {v.log.map((e, k) => (
-          <li key={k} className={e.kind === 'win' ? 'win' : e.kind === 'board' ? 'log-board' : ''}>
-            {logLine(v, e, cardText)}
-          </li>
-        ))}
-      </ol>
+    <div className="info">
+      <div className="caps win">{o.who}</div>
+      <div className="info-title">{o.showdown ? o.hand : 'Everyone else folded'}</div>
+      {o.beats && <div className="muted">Beats {o.beats}</div>}
+      <div className="win info-amount">{moneyExact(o.total)} pot awarded</div>
+      {o.sidePots.map((p, k) => (
+        <div key={k} className="muted small">
+          Side pot {moneyExact(p.amount)} → {p.to}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+/** The left column: your hand, or how the last one ended. */
+function Info({ v }: { v: View }) {
+  if (v.street === 'showdown' && v.result?.pots.length) return <Result v={v} />
+  const me = v.seats[v.you]
+  const hand = v.hole.length === 2 ? evaluate([...v.hole, ...v.board]).name : null
+  return (
+    <div className="info">
+      <div className="caps muted">Your hand</div>
+      <div className="info-title">{hand ?? (me?.inHand === false && v.street !== 'idle' ? 'Out of this hand' : 'No cards yet')}</div>
     </div>
   )
 }
@@ -187,14 +194,7 @@ function HandLog({ v }: { v: View }) {
 function Waiting({ v, c }: { v: View; c: Controls }) {
   const me = v.seats[v.you]!
   const turn = v.toAct !== null ? v.seats[v.toAct] : null
-  if (v.street === 'showdown' && v.result?.pots.length) {
-    const o = outcome(v)
-    return (
-      <Panel title={`${o.who} ${moneyExact(o.total)}${o.hand ? ` with ${o.hand.toLowerCase()}` : ''}`}>
-        <p className="muted small">{o.beats ? `Beats ${o.beats}. ` : ''}Next hand starting…</p>
-      </Panel>
-    )
-  }
+  if (v.street === 'showdown') return <TurnBar label="Next hand starting…" deadline={null} />
   if (me.stack === 0 && !me.inHand)
     return (
       <Panel title="You're out of chips">
@@ -263,7 +263,6 @@ export function Table({ v, c }: { v: View; c: Controls }) {
   const swipe = useRef<number | null>(null)
   const total = showdown ? v.result!.pots.reduce((n, p) => n + p.amount, 0) : pot(v)
   const street = showdown ? (v.result!.showdown ? 'Showdown' : 'Hand complete') : STREET[v.street]
-  const myHand = v.hole.length === 2 ? evaluate([...v.hole, ...v.board]).name : null
 
   return (
     <div className="table">
@@ -331,7 +330,6 @@ export function Table({ v, c }: { v: View; c: Controls }) {
                   <div className={`seat-stack ${won ? 'win' : ''}`}>{moneyExact(me.stack)}</div>
                 </div>
               </div>
-              <div className={`you-hand ${won ? 'win' : 'muted'}`}>{myHand ?? 'No cards yet'}</div>
             </div>
             {myTurn && <div className="swipe-hint muted small">↑ Swipe up to fold</div>}
           </div>
@@ -339,7 +337,7 @@ export function Table({ v, c }: { v: View; c: Controls }) {
       </div>
 
       <div className="bottom">
-        <HandLog v={v} />
+        <Info v={v} />
         <div className="side">{myTurn ? <ActionPanel key={`${v.hand}/${v.board.length}/${v.currentBet}`} v={v} c={c} /> : me ? <Waiting v={v} c={c} /> : null}</div>
       </div>
     </div>

@@ -54,10 +54,6 @@ test('heads-up: button posts small blind, acts first, uncalled bet comes back', 
   assert.equal(t.street, 'showdown')
   assert.deepEqual(t.seats.filter(s => s).map(s => s!.stack), [1010, 990])
   assert.equal(t.result!.pots[0].amount, 20)
-  assert.deepEqual(
-    t.log.map(e => [e.seat, e.kind, e.amount]),
-    [[0, 'blind', 5], [1, 'blind', 10], [0, 'raise', 100], [1, 'fold', undefined], [0, 'return', 90], [0, 'win', 20]],
-  )
 })
 
 test('big blind gets its option, then the flop goes to the first seat after the button', () => {

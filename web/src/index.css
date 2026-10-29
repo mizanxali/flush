@@ -142,7 +142,6 @@ input { font: inherit; color: inherit; }
 .hole .card + .card { margin-left: -22px; box-shadow: -6px 0 12px rgba(0, 0, 0, 0.18); }
 .hole .card-lg { width: 74px; height: 102px; }
 .you-meta { display: flex; flex-direction: column; gap: 6px; }
-.you-hand { font-size: 13px; padding-left: 2px; }
 .you.seat-turn .plate { border-color: var(--accent); }
 .you-won .plate { border-color: var(--win); }
 .swipe-hint { display: none; }
@@ -150,12 +149,9 @@ input { font: inherit; color: inherit; }
 .bottom { display: grid; grid-template-columns: 1fr minmax(0, 1.25fr); gap: 40px; align-items: start; }
 .side { min-width: 0; display: flex; flex-direction: column; gap: 10px; }
 
-/* The hand so far, newest last. */
-.log { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
-.log ol { list-style: none; margin: 0; padding: 0; max-height: 170px; overflow-y: auto; display: flex; flex-direction: column; gap: 3px; font-size: 14px; color: var(--muted); }
-.log li:last-child { color: var(--text); }
-.log .log-board { color: var(--text); }
-.log li.win { color: var(--win); }
+.info { display: flex; flex-direction: column; gap: 6px; }
+.info-title { font-size: 34px; font-weight: 500; letter-spacing: -0.03em; line-height: 1.15; }
+.info-amount { font-size: 17px; margin-top: 4px; }
 
 .turn { display: flex; flex-direction: column; gap: 8px; }
 .turn-line { display: flex; justify-content: space-between; font-size: 16px; }
@@ -243,7 +239,7 @@ kbd { font-family: var(--mono); font-size: 11px; padding: 1px 5px; border: 1px s
   .hand-no { display: none; }
   /* Phones keep the stacked layout: the oval's parts flow in order instead of sitting on the rim. */
   .table { flex-direction: row; flex-wrap: wrap; justify-content: center; align-content: flex-start; }
-  .table > *, .felt-center, .side, .you, .log { width: 100%; }
+  .table > *, .felt-center, .side, .you, .info { width: 100%; }
   .felt, .bottom { display: contents; }
   .rim, .flight { display: none; }
   .seat { position: static; transform: none; width: 33.3%; padding: 8px 3px 0; order: 1; }
@@ -266,10 +262,9 @@ kbd { font-family: var(--mono); font-size: 11px; padding: 1px 5px; border: 1px s
   .you-meta { grid-area: meta; justify-content: center; }
   .you-meta .plate { padding: 10px; }
   .you-meta .seat-stack { font-size: 22px; }
-  .you-hand { font-size: 14px; text-align: center; }
   .swipe-hint { display: block; grid-area: hint; text-align: center; }
-  .log { order: 5; margin-top: 18px; }
-  .log ol { max-height: 120px; font-size: 13px; }
+  .info { order: 5; margin-top: 18px; }
+  .info-title { font-size: 22px; }
   .bet-row { grid-template-columns: 1fr 112px; gap: 10px; }
   .bet-input, .bet-input input { font-size: 18px; padding-top: 5px; padding-bottom: 5px; }
   .buttons { grid-template-columns: 1fr 1fr 56px; }
