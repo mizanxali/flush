@@ -29,6 +29,15 @@ export type Street = 'idle' | 'preflop' | 'flop' | 'turn' | 'river' | 'showdown'
 export type PotResult = { amount: number; winners: number[]; hand: string | null; beats: string | null }
 export type Result = { pots: PotResult[]; showdown: boolean; hands: Record<number, string> }
 
+/** One line of the hand history. `seat` is null for the board. */
+export type LogEntry = {
+  seat: number | null
+  kind: 'blind' | 'fold' | 'check' | 'call' | 'bet' | 'raise' | 'allin' | 'board' | 'win' | 'return'
+  amount?: number
+  cards?: Card[]
+  hand?: string | null
+}
+
 export type Table = {
   sb: number
   bb: number
@@ -45,6 +54,7 @@ export type Table = {
   currentBet: number
   minRaise: number
   result: Result | null
+  log: LogEntry[] // this hand's
 }
 
 export function newTable(sb: number, bb: number, buyIn: number): Table {
@@ -53,7 +63,7 @@ export function newTable(sb: number, bb: number, buyIn: number): Table {
     seats: Array(MAX_SEATS).fill(null),
     button: -1, sbSeat: -1, bbSeat: -1,
     hand: 0, street: 'idle', board: [], deck: [],
-    toAct: null, currentBet: 0, minRaise: bb, result: null,
+    toAct: null, currentBet: 0, minRaise: bb, result: null, log: [],
   }
 }
 
@@ -99,7 +109,7 @@ export function leave(t: Table, i: number) {
 
 /** Clears a finished hand when no new one can start, so the table reads as empty. */
 export function endHand(t: Table) {
-  Object.assign(t, { street: 'idle', board: [], toAct: null, result: null, currentBet: 0 })
+  Object.assign(t, { street: 'idle', board: [], toAct: null, result: null, currentBet: 0, log: [] })
   t.seats = t.seats.map(s => (s?.left ? null : s))
   for (const s of t.seats) if (s) Object.assign(s, { bet: 0, committed: 0, hole: [], inHand: false, allIn: false, last: null })
 }
@@ -115,6 +125,7 @@ export function startHand(t: Table, deck = shuffledDeck()) {
   t.board = []
   t.deck = deck
   t.result = null
+  t.log = []
   t.seats = t.seats.map(s => (s?.left ? null : s))
   for (const s of t.seats) {
     if (!s) continue
@@ -124,6 +135,7 @@ export function startHand(t: Table, deck = shuffledDeck()) {
     for (let i = t.sbSeat, n = 0; n < players; i = next(t, i, s => !!s?.inHand), n++) t.seats[i]!.hole.push(t.deck.pop()!)
   put(t, t.sbSeat, t.sb)
   put(t, t.bbSeat, t.bb)
+  t.log.push({ seat: t.sbSeat, kind: 'blind', amount: t.seats[t.sbSeat]!.bet }, { seat: t.bbSeat, kind: 'blind', amount: t.seats[t.bbSeat]!.bet })
   t.seats[t.sbSeat]!.last = 'SB'
   t.seats[t.bbSeat]!.last = 'BB'
   t.currentBet = t.bb
@@ -170,10 +182,12 @@ export function act(t: Table, i: number, a: Action) {
   } else if (a.type === 'check') {
     if (!l.canCheck) throw new Error('cannot check')
     s.last = 'Check'
+    t.log.push({ seat: i, kind: 'check' })
   } else if (a.type === 'call') {
     if (l.canCheck) throw new Error('nothing to call')
     put(t, i, l.toCall)
     s.last = s.allIn ? 'All in' : 'Call'
+    t.log.push({ seat: i, kind: s.allIn ? 'allin' : 'call', amount: s.allIn ? s.bet : l.toCall })
   } else if (a.type === 'raise') {
     const to = Math.floor(a.to)
     if (!l.canRaise || !(to >= l.minTo && to <= l.maxTo)) throw new Error('bad raise')
@@ -190,6 +204,7 @@ export function act(t: Table, i: number, a: Action) {
     }
     t.currentBet = to
     s.last = s.allIn ? 'All in' : opening ? 'Bet' : 'Raise'
+    t.log.push({ seat: i, kind: s.allIn ? 'allin' : opening ? 'bet' : 'raise', amount: to })
   }
   s.acted = true
   advance(t)
@@ -199,6 +214,7 @@ function fold(t: Table, i: number) {
   const s = t.seats[i]!
   s.inHand = false
   s.last = 'Fold'
+  t.log.push({ seat: i, kind: 'fold' })
   // Out of turn (a player left): the action stays put unless the hand is now won.
   if (t.toAct !== i && t.seats.filter(x => x?.inHand).length === 1) finish(t)
 }
@@ -219,11 +235,14 @@ function advance(t: Table) {
   t.minRaise = t.bb
   const actors = t.seats.filter(canAct).length
   if (t.street === 'river' || actors <= 1) {
+    const from = t.board.length
     while (t.board.length < 5) t.board.push(t.deck.pop()!)
+    if (t.board.length > from) t.log.push({ seat: null, kind: 'board', cards: t.board.slice(from) })
     return finish(t)
   }
   t.street = t.street === 'preflop' ? 'flop' : t.street === 'flop' ? 'turn' : 'river'
   t.board.push(...t.deck.splice(-(t.street === 'flop' ? 3 : 1)))
+  t.log.push({ seat: null, kind: 'board', cards: t.board.slice(t.street === 'flop' ? 0 : -1) })
   for (const s of t.seats) if (s?.inHand && !s.allIn) s.last = null
   t.toAct = next(t, t.button, canAct)
 }
@@ -237,6 +256,7 @@ function finish(t: Table) {
     const extra = top[0][0].committed - top[1][0].committed
     top[0][0].committed -= extra
     top[0][0].stack += extra
+    t.log.push({ seat: top[0][1], kind: 'return', amount: extra })
   } else if (top.length === 1) {
     top[0][0].stack += top[0][0].committed
     top[0][0].committed = 0
@@ -261,7 +281,11 @@ function finish(t: Table) {
     const best = Math.max(...pot.eligible.map(i => values.get(i)!.score))
     const winners = pot.eligible.filter(i => values.get(i)!.score === best).sort((a, b) => order(a) - order(b))
     const share = Math.floor(pot.amount / winners.length)
-    winners.forEach((w, k) => (t.seats[w]!.stack += share + (k < pot.amount - share * winners.length ? 1 : 0)))
+    winners.forEach((w, k) => {
+      const won = share + (k < pot.amount - share * winners.length ? 1 : 0)
+      t.seats[w]!.stack += won
+      t.log.push({ seat: w, kind: 'win', amount: won, hand: showdown ? values.get(w)!.name : null })
+    })
     const losers = pot.eligible.filter(i => !winners.includes(i)).map(i => values.get(i)!)
     const runnerUp = losers.sort((a, b) => b.score - a.score)[0]
     result.pots.push({
