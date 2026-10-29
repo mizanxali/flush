@@ -4,7 +4,7 @@ import { evaluate } from '../../engine/cards.ts';
 import { badgeOf, liveCount, othersOf, outcome, readyCount, seatStatus, sizing, STREET } from '../../engine/display.ts';
 import { MAX_SEATS, type Action } from '../../engine/game.ts';
 import { moneyExact, pot, stakes, type SeatView, type View as TableView } from '../../engine/session.ts';
-import { Avatar, Badge, Btn, C, CardBack, Chip, PlayingCard, T, useSecondsLeft } from './ui';
+import { Avatar, Badge, Btn, C, CardBack, Chip, F, PlayingCard, T, useSecondsLeft } from './ui';
 
 export type Controls = {
   act(a: Action): void;
@@ -67,7 +67,7 @@ function Actions({ v, c }: { v: TableView; c: Controls }) {
           </View>
           <View style={st.presets}>
             {z.presets.map(([label, amount]) => (
-              <Pressable key={label} onPress={() => setTo(amount)} style={[st.preset, to === amount && { borderColor: '#cfcfcf' }]}>
+              <Pressable key={label} onPress={() => setTo(amount)} style={[st.preset, to === amount && { borderColor: C.accent }]}>
                 <Text style={[T.muted, to === amount && { color: C.text }]}>{label}</Text>
                 <Text style={T.text}>{moneyExact(amount)}</Text>
               </Pressable>
@@ -102,7 +102,7 @@ function Result({ v }: { v: TableView }) {
         {o.showdown ? (
           <>
             <Text style={T.caps}>Winning hand</Text>
-            <Text style={[T.text, { fontSize: 28, fontWeight: '500' }]}>{o.hand}</Text>
+            <Text style={[T.text, { fontSize: 28, fontFamily: F.medium, letterSpacing: -0.8 }]}>{o.hand}</Text>
             {o.beats ? <Text style={T.muted}>Beats {o.beats}</Text> : null}
           </>
         ) : (
@@ -216,7 +216,7 @@ export function Table({ v, c }: { v: TableView; c: Controls }) {
             </View>
             {myTurn ? <Text style={[T.muted, { textAlign: 'center', marginTop: 8 }]}>↑ Swipe up to fold</Text> : null}
           </View>
-          <View style={[st.box, { flex: 1, alignItems: 'center', justifyContent: 'center', borderRadius: 16 }, won && { borderColor: '#3d6b4c' }]}>
+          <View style={[st.box, { flex: 1, alignItems: 'center', justifyContent: 'center', borderRadius: 16 }, won && { borderColor: '#2f6d62' }]}>
             <View style={st.row}>
               <Text style={[T.muted, won && T.win]}>{myHand ?? 'You'}</Text>
               <Badge kind={badgeOf(v, v.you)} />
@@ -239,5 +239,5 @@ const st = StyleSheet.create({
   preset: { width: '48.8%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderColor: C.line2, borderRadius: 5, padding: 10 },
   step: { width: 54, paddingHorizontal: 0 },
   overlap: { marginLeft: '-24%', borderLeftWidth: 1, borderLeftColor: '#d6d6d6', shadowColor: '#000', shadowOpacity: 0.25, shadowRadius: 6, shadowOffset: { width: -3, height: 0 }, elevation: 4 },
-  banner: { backgroundColor: '#3a2a1a', color: '#f3c58e', padding: 10, borderRadius: 6, marginTop: 8, overflow: 'hidden' },
+  banner: { backgroundColor: '#2e2410', color: '#f3cf8a', fontFamily: F.regular, padding: 10, borderRadius: 6, marginTop: 8, overflow: 'hidden' },
 });

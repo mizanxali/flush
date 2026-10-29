@@ -6,7 +6,7 @@ export function Logo() {
   return (
     <span className="logo">
       <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden>
-        <path fill="var(--pink)" d="M12 2C9 6 4 8.5 4 13a4.5 4.5 0 0 0 7 3.7L10 22h4l-1-5.3A4.5 4.5 0 0 0 20 13c0-4.5-5-7-8-11Z" />
+        <path fill="var(--accent)" d="M12 2C9 6 4 8.5 4 13a4.5 4.5 0 0 0 7 3.7L10 22h4l-1-5.3A4.5 4.5 0 0 0 20 13c0-4.5-5-7-8-11Z" />
       </svg>
       <span>
         flush<span className="logo-dot">.</span>

@@ -6,7 +6,7 @@ import { AVATARS } from '../engine/avatar.ts';
 import { DEFAULTS, Guest, Host, stakes, type Me } from '../engine/session.ts';
 import { Net } from './src/net';
 import { Table, type Controls } from './src/Table';
-import { Avatar, Btn, C, Chip, T } from './src/ui';
+import { Avatar, Btn, C, Chip, F, T } from './src/ui';
 
 type Profile = Omit<Me, 'id'>;
 type Mode = { k: 'home' } | { k: 'host'; host: Host } | { k: 'join'; guest: Guest };
@@ -109,8 +109,8 @@ export default function App() {
 
 function Logo() {
   return (
-    <Text style={{ color: C.text, fontSize: 24, fontWeight: '700', letterSpacing: -1 }}>
-      <Text style={{ color: C.pink }}>♠ </Text>flush<Text style={{ color: C.pink }}>.</Text>
+    <Text style={{ color: C.text, fontSize: 24, fontFamily: F.semibold, letterSpacing: -1.2 }}>
+      <Text style={{ color: C.accent }}>{'♠\uFE0E '}</Text>flush<Text style={{ color: C.accent }}>.</Text>
     </Text>
   );
 }
@@ -202,7 +202,7 @@ const s = StyleSheet.create({
   pad: { padding: 20 },
   row: { flexDirection: 'row', alignItems: 'center' },
   wrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  avatar: { backgroundColor: '#242424', borderWidth: 1, borderColor: C.line, borderRadius: 10, padding: 6 },
-  input: { borderWidth: 1, borderColor: C.line2, borderRadius: 6, paddingHorizontal: 12, paddingVertical: 10, color: C.text, fontSize: 17 },
+  avatar: { backgroundColor: '#161c19', borderWidth: 1, borderColor: C.line, borderRadius: 10, padding: 6 },
+  input: { borderWidth: 1, borderColor: C.line2, borderRadius: 6, paddingHorizontal: 12, paddingVertical: 10, color: C.text, fontSize: 17, fontFamily: F.regular },
   tableRow: { borderWidth: 1, borderColor: C.line2, borderRadius: 8, padding: 14, gap: 12 },
 });
