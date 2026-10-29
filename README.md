@@ -1,6 +1,6 @@
 # flush
 
-![flush: one table across a browser, an iPhone and an Android phone](docs/cover.png)
+![flush: one table across a browser, an iPhone and an Android phone](screenshots/cover.png)
 
 No-limit Texas hold'em for the people in the room. It plays over Bluetooth and the local network, with no internet and no server. It runs in Chrome, on Android and on iOS, all built on the [Offline Protocol SDK](https://github.com/Offline-Protocol/offline-protocol-sdk).
 
