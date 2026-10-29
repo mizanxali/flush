@@ -93,7 +93,8 @@ input { font: inherit; color: inherit; }
 .home { padding: 28px; max-width: 640px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; gap: 22px; }
 .hero { font-size: 26px; font-weight: 500; letter-spacing: -0.02em; line-height: 1.2; margin: 8px 0; }
 .profile { display: flex; align-items: center; gap: 18px; }
-.avatar-btn { background: #161c19; border: 1px solid var(--line); border-radius: 10px; padding: 6px; display: grid; }
+.avatar { border-radius: 50%; background: #1d2621; flex: none; }
+.avatar-pick { display: flex; flex-direction: column; align-items: center; gap: 8px; }
 .text { width: 100%; background: #141a17; border: 1px solid var(--line-2); border-radius: 6px; padding: 12px 14px; font-size: 17px; margin-top: 6px; }
 .text:focus, .bet-input:focus-within, .paste input:focus { outline: 2px solid rgba(240, 180, 76, 0.6); outline-offset: 1px; }
 .home-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -112,10 +113,10 @@ input { font: inherit; color: inherit; }
 .hand-no { margin-right: 6px; }
 
 /* The oval: seats sit on the rim at positions from engine/display.ts seatSpot(). */
-.felt { position: relative; width: 100%; aspect-ratio: 2.15; max-height: calc(100dvh - 400px); min-height: 380px; margin: 0 0 48px; }
+.felt { position: relative; width: 100%; aspect-ratio: 2.15; max-height: calc(100dvh - 440px); min-height: 380px; margin: 44px 0 48px; }
 .rim { position: absolute; inset: 10% 9%; border: 1px solid var(--line-2); border-radius: 50%; pointer-events: none; }
 .seat {
-  position: absolute; left: var(--x); top: var(--y); transform: translate(-50%, -50%);
+  position: absolute; left: var(--x); top: var(--y); transform: translate(-50%, var(--ay));
   display: flex; flex-direction: column; align-items: center; gap: 3px; text-align: center;
   padding: 4px 12px; background: var(--bg); max-width: 170px; /* the background breaks the rim line behind it */
 }
@@ -126,9 +127,12 @@ input { font: inherit; color: inherit; }
 .seat-out .seat-name, .seat-out .seat-stack, .seat-out .seat-status { color: var(--dim); }
 .seat-turn .seat-name, .seat-turn .seat-status { color: var(--accent); }
 
-.felt-center { position: absolute; left: 50%; top: 44%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.felt-center { position: absolute; left: 50%; top: 47%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .pot { font-size: 44px; font-weight: 500; letter-spacing: -0.04em; line-height: 1.1; margin-bottom: 10px; }
 .board { display: flex; gap: 8px; }
+.board .card-lg { width: 80px; height: 112px; padding: 9px 11px 11px; }
+.board .card-lg .card-rank { font-size: 34px; }
+.board .card-lg .card-suit { font-size: 25px; }
 
 .you { position: absolute; left: 50%; top: 89%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 0 14px; background: var(--bg); }
 .hole { display: flex; touch-action: none; user-select: none; }

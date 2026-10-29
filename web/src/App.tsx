@@ -1,5 +1,5 @@
 import { useEffect, useReducer, useState } from 'react'
-import { AVATARS } from '../../engine/avatar.ts'
+import { rollAvatar } from '../../engine/avatar.ts'
 import { DEFAULTS, Guest, Host, stakes, type Me } from '../../engine/session.ts'
 import { Net } from './net'
 import { GuestPair, HostPair } from './Pair'
@@ -23,7 +23,7 @@ function loadMe(): Omit<Me, 'id'> {
   } catch {
     /* first visit */
   }
-  return { name: `Player ${1000 + Math.floor(Math.random() * 9000)}`, avatar: Math.floor(Math.random() * AVATARS) }
+  return { name: `Player ${1000 + Math.floor(Math.random() * 9000)}`, avatar: rollAvatar() }
 }
 
 export default function App() {
@@ -111,9 +111,12 @@ function Home({ me, setMe, onHost, onJoin }: { me: Omit<Me, 'id'>; setMe: (m: Om
   return (
     <div className="home">
       <div className="profile">
-        <button className="avatar-btn" onClick={() => setMe({ ...me, avatar: (me.avatar + 1) % AVATARS })} title="Change avatar" aria-label="Change avatar">
-          <Avatar seed={me.avatar} size={72} />
-        </button>
+        <div className="avatar-pick">
+          <Avatar key={me.avatar} seed={me.avatar} size={72} />
+          <button className="chip-btn" onClick={() => setMe({ ...me, avatar: rollAvatar() })} aria-label="New avatar" title="New avatar">
+            ↻ New
+          </button>
+        </div>
         <div className="grow">
           <label className="caps muted" htmlFor="name">
             Your name

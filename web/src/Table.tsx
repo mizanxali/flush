@@ -24,7 +24,8 @@ const badge = (v: View, i: number) => {
 function spotStyle(v: View, i: number): CSSProperties {
   const wide = seatSpot(v, i, false)
   const tall = seatSpot(v, i, true)
-  return { '--x': `${wide.x}%`, '--y': `${wide.y}%`, '--tx': `${tall.x}%`, '--ty': `${tall.y}%` } as CSSProperties
+  // Seats above the middle hang upward from their spot, so their cards never reach the pot.
+  return { '--x': `${wide.x}%`, '--y': `${wide.y}%`, '--ay': wide.y < 40 ? '-78%' : '-45%', '--tx': `${tall.x}%`, '--ty': `${tall.y}%` } as CSSProperties
 }
 
 /** "Your move ……… 14s" over a bar that drains with the clock. */

@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
-import { avatar } from '../../engine/avatar.ts'
+import { memo, useEffect, useMemo, useState } from 'react'
+import { Avatar as DiceAvatar, Style } from '@dicebear/core'
+import avataaars from '@dicebear/styles/avataaars.json'
 import { isRed, rankLabel, suitSymbol, type Card } from '../../engine/cards.ts'
 
 export function Logo() {
@@ -15,14 +16,13 @@ export function Logo() {
   )
 }
 
-export function Avatar({ seed, size = 48, dim = false }: { seed: number; size?: number; dim?: boolean }) {
-  const grid = avatar(seed)
-  return (
-    <svg className="avatar" width={size} height={size} viewBox="0 0 12 12" shapeRendering="crispEdges" style={{ opacity: dim ? 0.45 : 1 }} aria-hidden>
-      {grid.flatMap((row, y) => row.map((c, x) => (c ? <rect key={`${x},${y}`} x={x} y={y} width="1" height="1" fill={c} /> : null)))}
-    </svg>
-  )
-}
+const style = new Style(avataaars)
+
+/** A DiceBear avataaar in a circle. Memoised: one is a few hundred SVG nodes, and seats re-render every clock tick. */
+export const Avatar = memo(function Avatar({ seed, size = 48, dim = false }: { seed: number; size?: number; dim?: boolean }) {
+  const src = useMemo(() => 'data:image/svg+xml;utf8,' + encodeURIComponent(new DiceAvatar(style, { seed: String(seed) }).toString()), [seed])
+  return <img className="avatar" src={src} width={size} height={size} alt="" style={{ opacity: dim ? 0.45 : 1 }} />
+})
 
 export function PlayingCard({ card, size = 'md', className = '' }: { card: Card | null; size?: 'xs' | 'sm' | 'md' | 'lg'; className?: string }) {
   if (!card) return <div className={`card card-${size} card-empty ${className}`} />
