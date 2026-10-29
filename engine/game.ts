@@ -97,6 +97,13 @@ export function leave(t: Table, i: number) {
   else fold(t, i)
 }
 
+/** Clears a finished hand when no new one can start, so the table reads as empty. */
+export function endHand(t: Table) {
+  Object.assign(t, { street: 'idle', board: [], toAct: null, result: null, currentBet: 0 })
+  t.seats = t.seats.map(s => (s?.left ? null : s))
+  for (const s of t.seats) if (s) Object.assign(s, { bet: 0, committed: 0, hole: [], inHand: false, allIn: false, last: null })
+}
+
 export function startHand(t: Table, deck = shuffledDeck()) {
   if (!canStart(t)) throw new Error('need two players with chips')
   const players = t.seats.filter(ready).length

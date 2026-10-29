@@ -1,7 +1,7 @@
 // The table protocol over direct, encrypted SDK messages. The host runs the Table and sends each
 // player their own view (public state plus their hole cards); players send actions back.
 import type { Card } from './cards.ts'
-import { act, canStart, leave, legal, MAX_SEATS, newTable, sit, startHand, type Action, type Result, type Seat, type Street, type Table } from './game.ts'
+import { act, canStart, endHand, leave, legal, MAX_SEATS, newTable, sit, startHand, type Action, type Result, type Seat, type Street, type Table } from './game.ts'
 
 export type SeatView = Omit<Seat, 'hole'> & { cards: Card[] | null; hasCards: boolean }
 
@@ -43,6 +43,7 @@ export type Msg =
   | { t: 'rebuy' }
   | { t: 'sit'; out: boolean }
   | { t: 'leave' }
+  | { t: 'closed' } // host → players: the table is gone
 
 /** What a platform's network adapter gives a session. */
 export interface Send {
@@ -71,7 +72,7 @@ export const moneyExact = (cents: number) => '$' + (cents / 100).toLocaleString(
 export const stakes = (v: { sb: number; bb: number }) => `${money(v.sb)} / ${money(v.bb)}`
 export const pot = (v: { seats: ({ committed: number } | null)[] }) => v.seats.reduce((n, s) => n + (s?.committed ?? 0), 0)
 
-const cleanName = (x: unknown) => (typeof x === 'string' ? x.replace(/\s+/g, ' ').trim().slice(0, 16) : '') || 'Player'
+const cleanName = (x: unknown, max = 16) => (typeof x === 'string' ? x.replace(/\s+/g, ' ').trim().slice(0, max) : '') || 'Player'
 const isAction = (a: any): a is Action =>
   a && (a.type === 'fold' || a.type === 'check' || a.type === 'call' || (a.type === 'raise' && Number.isFinite(a.to)))
 
@@ -172,6 +173,12 @@ export class Host {
     clearTimeout(this.nextTimer)
   }
 
+  /** Ends the table for everyone. */
+  close() {
+    this.stop()
+    for (const s of this.t.seats) if (s && s.id !== this.me.id) this.net.send(s.id, { t: 'closed' })
+  }
+
   kick(i: number) {
     const s = this.t.seats[i]
     if (!s || s.id === this.me.id) return
@@ -226,7 +233,7 @@ export class Host {
         this.nextTimer = undefined
         if (!this.running) return
         if (canStart(t)) startHand(t)
-        else t.street = 'idle'
+        else endHand(t)
         this.update()
       }, this.cfg.nextHandMs)
     }
@@ -281,6 +288,7 @@ export class Guest {
   view: View | null = null
   hostLost = false
   full = false
+  closed = false
   private readonly net: Send
   private readonly me: Me
   private readonly onChange: () => void
@@ -308,10 +316,13 @@ export class Guest {
 
   message(from: string, m: Msg) {
     if (m.t === 'table') {
-      this.tables.set(from, { name: cleanName(m.name), sb: m.sb, bb: m.bb, seated: m.seated, max: m.max })
-    } else if (m.t === 'full' && from === this.host) {
-      this.full = true
+      this.tables.set(from, { name: cleanName(m.name, 24), sb: m.sb, bb: m.bb, seated: m.seated, max: m.max })
+    } else if ((m.t === 'full' || m.t === 'closed') && from === this.host) {
+      this.full = m.t === 'full'
+      this.closed = m.t === 'closed'
+      this.tables.delete(from)
       this.host = null
+      this.view = null
     } else if (m.t === 'state' && from === this.host) {
       const cur = this.view
       if (cur && cur.epoch === m.view.epoch && cur.v >= m.view.v) return
@@ -323,7 +334,7 @@ export class Guest {
 
   join(host: string) {
     this.host = host
-    this.full = false
+    this.full = this.closed = false
     this.view = null
     this.net.send(host, { t: 'join', name: this.me.name, avatar: this.me.avatar })
     this.onChange()
