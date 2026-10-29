@@ -67,3 +67,18 @@ export function outcome(v: View) {
 }
 
 export const readyCount = (v: View) => v.seats.filter(s => s && s.stack > 0 && !s.sittingOut).length
+
+/**
+ * Where seat `i` sits on the oval table, as percentages of the table area, clockwise from the
+ * viewer at the bottom. Positions follow the seat, not the number of players, so nobody moves
+ * when someone joins. `tall` spreads the side seats toward the corners of a portrait screen.
+ */
+export function seatSpot(v: View, i: number, tall: boolean) {
+  const k = (i - v.you + MAX_SEATS) % MAX_SEATS
+  const deg = (tall ? [90, 142, 208, 270, 332, 38] : [90, 165, 218, 270, 322, 15])[k]
+  const a = (deg * Math.PI) / 180
+  return { x: 50 + RIM.rx * Math.cos(a), y: 50 + RIM.ry * Math.sin(a) }
+}
+
+/** The oval's radii, in percent of the table area's width and height. */
+export const RIM = { rx: 41, ry: 40 }

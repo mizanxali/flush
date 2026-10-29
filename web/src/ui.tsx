@@ -50,17 +50,3 @@ export function useSecondsLeft(deadline: number | null) {
   }, [deadline])
   return deadline === null ? null : Math.max(0, Math.ceil((deadline - now) / 1000))
 }
-
-export function Ring({ seconds, total }: { seconds: number; total: number }) {
-  const r = 15
-  const c = 2 * Math.PI * r
-  return (
-    <span className={`ring ${seconds <= 5 ? 'ring-low' : ''}`}>
-      <svg viewBox="0 0 36 36" width="36" height="36" aria-hidden>
-        <circle cx="18" cy="18" r={r} className="ring-track" />
-        <circle cx="18" cy="18" r={r} className="ring-bar" strokeDasharray={c} strokeDashoffset={c * (1 - seconds / total)} />
-      </svg>
-      <span className="ring-num">{seconds}</span>
-    </span>
-  )
-}
