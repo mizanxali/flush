@@ -9,7 +9,7 @@ function QR({ text }: { text: string }) {
     QRCode.toString(text, { type: 'svg', margin: 1, errorCorrectionLevel: 'L', color: { dark: '#111111', light: '#f7f7f7' } }).then(setSvg)
   }, [text])
   return (
-    <div className="qr-wrap">
+    <div className="qr-wrap" data-code={text}>
       <div className="qr" dangerouslySetInnerHTML={{ __html: svg }} />
       <button className="chip-btn" onClick={() => navigator.clipboard?.writeText(text)}>
         Copy code
