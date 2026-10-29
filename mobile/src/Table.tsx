@@ -218,7 +218,7 @@ export function Table({ v, c }: { v: TableView; c: Controls }) {
             </View>
             {myTurn ? <Text style={[T.muted, { textAlign: 'center', marginTop: 8 }]}>↑ Swipe up to fold</Text> : null}
           </View>
-          <View style={[st.box, { flex: 1, alignItems: 'center', justifyContent: 'center', borderRadius: 16 }, won && { borderColor: '#2f6d62' }]}>
+          <View style={[st.box, { flex: 1, alignItems: 'center', justifyContent: 'center' }, won && { borderColor: '#2f6d62' }]}>
             <View style={st.row}>
               <Text style={[T.muted, won && T.win]}>{myHand ?? 'You'}</Text>
               <Badge kind={badgeOf(v, v.you)} />

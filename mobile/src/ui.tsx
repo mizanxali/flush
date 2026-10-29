@@ -5,14 +5,14 @@ import { Avatar as DiceAvatar, Style } from '@dicebear/core';
 import avataaars from '@dicebear/styles/avataaars.json';
 import { isRed, rankLabel, suitSymbol, type Card } from '../../engine/cards.ts';
 
-// Same tokens as web/src/index.css: felt-dark greens, a brass accent, teal for wins.
+// Same tokens as web/src/index.css: neutral near-black, a brass accent, teal for wins.
 export const C = {
-  bg: '#0e1210',
-  line: '#212925',
-  line2: '#303a35',
-  text: '#eef1ec',
-  muted: '#8d978f',
-  dim: '#58625b',
+  bg: '#111111',
+  line: '#242424',
+  line2: '#333333',
+  text: '#ededed',
+  muted: '#8f8f8f',
+  dim: '#5c5c5c',
   accent: '#f0b44c',
   accentInk: '#1f1503',
   win: '#57d3be',
@@ -59,8 +59,8 @@ export const CardBack = () => <View style={[s.card, s.tiny, s.back]} />;
 
 export function Badge({ kind }: { kind: 'D' | 'SB' | 'BB' | null }) {
   if (!kind) return null;
-  const bg = kind === 'BB' ? C.accent : kind === 'SB' ? '#26302b' : C.text;
-  const fg = kind === 'BB' ? C.accentInk : kind === 'SB' ? '#cfd8d2' : C.bg;
+  const bg = kind === 'BB' ? C.accent : kind === 'SB' ? '#2b2b2b' : C.text;
+  const fg = kind === 'BB' ? C.accentInk : kind === 'SB' ? '#d4d4d4' : C.bg;
   return (
     <View style={[s.badge, { backgroundColor: bg }, kind === 'D' && { borderRadius: 99 }]}>
       <Text style={{ color: fg, fontSize: 9, fontFamily: F.mono }}>{kind}</Text>
@@ -106,9 +106,9 @@ const s = StyleSheet.create({
   card: { backgroundColor: C.card, borderRadius: 10, paddingHorizontal: 10, paddingVertical: 8, justifyContent: 'space-between', aspectRatio: 0.72 },
   tiny: { width: 22, height: 31, aspectRatio: undefined, borderRadius: 3, paddingHorizontal: 2, paddingVertical: 1, alignItems: 'center' },
   empty: { backgroundColor: 'transparent', borderWidth: 1.5, borderStyle: 'dashed', borderColor: C.line2 },
-  back: { backgroundColor: '#1d382d', borderWidth: 2, borderColor: C.card },
+  back: { backgroundColor: '#2a2a2a', borderWidth: 2, borderColor: C.card },
   badge: { borderRadius: 3, paddingHorizontal: 4, paddingVertical: 2, marginLeft: 5 },
-  btn: { minHeight: 54, borderRadius: 28, borderWidth: 1, borderColor: C.line2, backgroundColor: '#141a17', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 14 },
+  btn: { minHeight: 52, borderRadius: 6, borderWidth: 1, borderColor: C.line2, backgroundColor: '#161616', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 14 },
   primary: { backgroundColor: C.accent, borderColor: C.accent },
   chip: { borderWidth: 1, borderColor: C.line2, borderRadius: 6, paddingHorizontal: 12, paddingVertical: 9 },
 });

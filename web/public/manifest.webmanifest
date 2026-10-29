@@ -4,7 +4,7 @@
   "description": "No-limit hold'em with the people in the room. No internet needed.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0e1210",
-  "theme_color": "#0e1210",
+  "background_color": "#111111",
+  "theme_color": "#111111",
   "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
 }
