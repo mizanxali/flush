@@ -1,6 +1,8 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { memo, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
-import { avatar } from '../../engine/avatar.ts';
+import { SvgXml } from 'react-native-svg';
+import { Avatar as DiceAvatar, Style } from '@dicebear/core';
+import avataaars from '@dicebear/styles/avataaars.json';
 import { isRed, rankLabel, suitSymbol, type Card } from '../../engine/cards.ts';
 
 // Same tokens as web/src/index.css: felt-dark greens, a brass accent, teal for wins.
@@ -29,16 +31,17 @@ export const T = StyleSheet.create({
   win: { color: C.win },
 });
 
-export function Avatar({ seed, size = 44, dim = false }: { seed: number; size?: number; dim?: boolean }) {
-  const px = size / 12;
+const style = new Style(avataaars);
+
+/** A DiceBear avataaar, as Radius draws them. Memoised: one is a few hundred SVG nodes, and seats re-render every clock tick. */
+export const Avatar = memo(function Avatar({ seed, size = 44, dim = false }: { seed: number; size?: number; dim?: boolean }) {
+  const xml = useMemo(() => new DiceAvatar(style, { seed: String(seed) }).toString(), [seed]);
   return (
     <View style={{ width: size, height: size, opacity: dim ? 0.45 : 1 }}>
-      {avatar(seed).flatMap((row, y) =>
-        row.map((c, x) => (c ? <View key={`${x},${y}`} style={{ position: 'absolute', left: x * px, top: y * px, width: px + 0.5, height: px + 0.5, backgroundColor: c }} /> : null)),
-      )}
+      <SvgXml xml={xml} width={size} height={size} />
     </View>
   );
-}
+});
 
 export function PlayingCard({ card, style, big = false, tiny = false }: { card: Card | null; style?: StyleProp<ViewStyle>; big?: boolean; tiny?: boolean }) {
   if (!card) return <View style={[s.card, s.empty, style]} />;

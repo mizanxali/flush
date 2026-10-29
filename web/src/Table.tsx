@@ -243,9 +243,9 @@ export function Table({ v, c }: { v: View; c: Controls }) {
         </button>
         <div>
           <div className="caps muted">
-            {v.name} · {seated} of {MAX_SEATS} seated{live === 2 && v.street !== 'idle' ? ' · heads up' : ''}
+            Blinds {stakes(v)} · {seated} of {MAX_SEATS} seated{live === 2 && v.street !== 'idle' ? ' · heads up' : ''}
           </div>
-          <div className="stakes">{stakes(v)}</div>
+          <div className="stakes">{v.name}</div>
         </div>
         <div className="subhead-right">
           <span className="muted small hand-no">{v.hand > 0 ? `Hand ${v.hand}${street ? ` · ${street}` : ''}` : ''}</span>

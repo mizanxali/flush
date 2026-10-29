@@ -48,6 +48,11 @@ npx react-native run-android --mode release
 
 `ios/Podfile` patches two React Native 0.82 build problems under Xcode 26 (fmt's `consteval`, and pods declaring iOS 13). The app keeps the screen on, because the host phone carries the table.
 
+## Credits
+
+- **Avatars:** [DiceBear](https://www.dicebear.com) (MIT) drawing the "avataaars" style by Pablo Stanley, [free for personal and commercial use](https://avataaars.com/), as in Radius. `mobile/patches/` carries Radius's patch to `@dicebear/core` 10.7.0 for Hermes.
+- **Type:** [Geist](https://vercel.com/font) (OFL 1.1); the licence is in `mobile/assets/Geist-OFL.txt`.
+
 ## Game rules
 
 - **Format:** cash game, 2 to 6 seats. The host picks the blinds ($0.10/$0.20 up to $2/$5) and a buy-in of 50, 100 or 200 big blinds.

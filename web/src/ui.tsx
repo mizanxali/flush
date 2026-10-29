@@ -18,7 +18,7 @@ export function Logo() {
 
 const style = new Style(avataaars)
 
-/** A DiceBear avataaar in a circle. Memoised: one is a few hundred SVG nodes, and seats re-render every clock tick. */
+/** A DiceBear avataaar. Memoised: one is a few hundred SVG nodes, and seats re-render every clock tick. */
 export const Avatar = memo(function Avatar({ seed, size = 48, dim = false }: { seed: number; size?: number; dim?: boolean }) {
   const src = useMemo(() => 'data:image/svg+xml;utf8,' + encodeURIComponent(new DiceAvatar(style, { seed: String(seed) }).toString()), [seed])
   return <img className="avatar" src={src} width={size} height={size} alt="" style={{ opacity: dim ? 0.45 : 1 }} />

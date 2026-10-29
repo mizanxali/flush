@@ -2,7 +2,7 @@ import { useEffect, useReducer, useState } from 'react';
 import { Alert, Pressable, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { AVATARS } from '../engine/avatar.ts';
+import { rollAvatar } from '../engine/avatar.ts';
 import { DEFAULTS, Guest, Host, stakes, type Me } from '../engine/session.ts';
 import { Net } from './src/net';
 import { Table, type Controls } from './src/Table';
@@ -31,7 +31,7 @@ export default function App() {
       .then(raw => JSON.parse(raw ?? 'null'))
       .catch(() => null)
       .then(saved =>
-        setMe(saved?.name ? saved : { name: `Player ${1000 + Math.floor(Math.random() * 9000)}`, avatar: Math.floor(Math.random() * AVATARS) }),
+        setMe(saved?.name ? saved : { name: `Player ${1000 + Math.floor(Math.random() * 9000)}`, avatar: rollAvatar() }),
       );
     Net.start().then(setNet, e => setError(String(e?.message ?? e)));
   }, []);
@@ -124,9 +124,10 @@ function Home({ me, setMe, onHost, onJoin }: { me: Profile; setMe: (p: Profile) 
     <ScrollView contentContainerStyle={[s.pad, { gap: 20 }]} keyboardShouldPersistTaps="handled">
       <Logo />
       <View style={[s.row, { gap: 16 }]}>
-        <Pressable onPress={() => setMe({ ...me, avatar: (me.avatar + 1) % AVATARS })} style={s.avatar} accessibilityLabel="Change avatar">
+        <View style={{ alignItems: 'center', gap: 8 }}>
           <Avatar seed={me.avatar} size={64} />
-        </Pressable>
+          <Chip onPress={() => setMe({ ...me, avatar: rollAvatar() })}>↻ New</Chip>
+        </View>
         <View style={{ flex: 1, gap: 6 }}>
           <Text style={T.caps}>Your name</Text>
           <TextInput style={s.input} value={me.name} maxLength={16} onChangeText={t => setMe({ ...me, name: t })} placeholderTextColor={C.dim} />
@@ -188,7 +189,7 @@ function Join({ guest, onBack }: { guest: Guest; onBack: () => void }) {
           <View style={{ flex: 1 }}>
             <Text style={T.text}>{t.name}</Text>
             <Text style={T.muted}>
-              {stakes(t)} · {t.seated} of {t.max} seated
+              Blinds {stakes(t)} · {t.seated} of {t.max} seated
             </Text>
           </View>
           <Btn primary title="Join" disabled={t.seated >= t.max} onPress={() => guest.join(id)} style={{ minHeight: 44, paddingHorizontal: 22 }} />
@@ -202,7 +203,6 @@ const s = StyleSheet.create({
   pad: { padding: 20 },
   row: { flexDirection: 'row', alignItems: 'center' },
   wrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  avatar: { backgroundColor: '#161c19', borderWidth: 1, borderColor: C.line, borderRadius: 10, padding: 6 },
   input: { borderWidth: 1, borderColor: C.line2, borderRadius: 6, paddingHorizontal: 12, paddingVertical: 10, color: C.text, fontSize: 17, fontFamily: F.regular },
   tableRow: { borderWidth: 1, borderColor: C.line2, borderRadius: 8, padding: 14, gap: 12 },
 });

@@ -1,0 +1,326 @@
+diff --git a/node_modules/@dicebear/core/lib/Avatar.js b/node_modules/@dicebear/core/lib/Avatar.js
+index db56621..8464d39 100644
+--- a/node_modules/@dicebear/core/lib/Avatar.js
++++ b/node_modules/@dicebear/core/lib/Avatar.js
+@@ -1,10 +1,10 @@
+-var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
++var __classPrivateFieldSet = function (receiver, state, value, kind, f) {
+     if (kind === "m") throw new TypeError("Private method is not writable");
+     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
+     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
+     return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
+ };
+-var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
++var __classPrivateFieldGet = function (receiver, state, kind, f) {
+     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+diff --git a/node_modules/@dicebear/core/lib/Options.js b/node_modules/@dicebear/core/lib/Options.js
+index 311dc29..be5a514 100644
+--- a/node_modules/@dicebear/core/lib/Options.js
++++ b/node_modules/@dicebear/core/lib/Options.js
+@@ -1,10 +1,10 @@
+-var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
++var __classPrivateFieldSet = function (receiver, state, value, kind, f) {
+     if (kind === "m") throw new TypeError("Private method is not writable");
+     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
+     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
+     return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
+ };
+-var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
++var __classPrivateFieldGet = function (receiver, state, kind, f) {
+     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+diff --git a/node_modules/@dicebear/core/lib/OptionsDescriptor.js b/node_modules/@dicebear/core/lib/OptionsDescriptor.js
+index 89cacd2..ca152b1 100644
+--- a/node_modules/@dicebear/core/lib/OptionsDescriptor.js
++++ b/node_modules/@dicebear/core/lib/OptionsDescriptor.js
+@@ -1,10 +1,10 @@
+-var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
++var __classPrivateFieldSet = function (receiver, state, value, kind, f) {
+     if (kind === "m") throw new TypeError("Private method is not writable");
+     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
+     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
+     return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
+ };
+-var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
++var __classPrivateFieldGet = function (receiver, state, kind, f) {
+     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+diff --git a/node_modules/@dicebear/core/lib/Prng.js b/node_modules/@dicebear/core/lib/Prng.js
+index 83a6062..27b49b9 100644
+--- a/node_modules/@dicebear/core/lib/Prng.js
++++ b/node_modules/@dicebear/core/lib/Prng.js
+@@ -1,10 +1,10 @@
+-var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
++var __classPrivateFieldSet = function (receiver, state, value, kind, f) {
+     if (kind === "m") throw new TypeError("Private method is not writable");
+     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
+     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
+     return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
+ };
+-var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
++var __classPrivateFieldGet = function (receiver, state, kind, f) {
+     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+diff --git a/node_modules/@dicebear/core/lib/Prng/Mulberry32.js b/node_modules/@dicebear/core/lib/Prng/Mulberry32.js
+index 6d09d65..85480fa 100644
+--- a/node_modules/@dicebear/core/lib/Prng/Mulberry32.js
++++ b/node_modules/@dicebear/core/lib/Prng/Mulberry32.js
+@@ -1,10 +1,10 @@
+-var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
++var __classPrivateFieldSet = function (receiver, state, value, kind, f) {
+     if (kind === "m") throw new TypeError("Private method is not writable");
+     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
+     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
+     return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
+ };
+-var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
++var __classPrivateFieldGet = function (receiver, state, kind, f) {
+     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+diff --git a/node_modules/@dicebear/core/lib/Renderer.js b/node_modules/@dicebear/core/lib/Renderer.js
+index aee98ab..3fed37e 100644
+--- a/node_modules/@dicebear/core/lib/Renderer.js
++++ b/node_modules/@dicebear/core/lib/Renderer.js
+@@ -1,10 +1,10 @@
+-var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
++var __classPrivateFieldSet = function (receiver, state, value, kind, f) {
+     if (kind === "m") throw new TypeError("Private method is not writable");
+     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
+     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
+     return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
+ };
+-var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
++var __classPrivateFieldGet = function (receiver, state, kind, f) {
+     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+diff --git a/node_modules/@dicebear/core/lib/Resolver.js b/node_modules/@dicebear/core/lib/Resolver.js
+index afc1abe..c26cf26 100644
+--- a/node_modules/@dicebear/core/lib/Resolver.js
++++ b/node_modules/@dicebear/core/lib/Resolver.js
+@@ -1,10 +1,10 @@
+-var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
++var __classPrivateFieldSet = function (receiver, state, value, kind, f) {
+     if (kind === "m") throw new TypeError("Private method is not writable");
+     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
+     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
+     return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
+ };
+-var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
++var __classPrivateFieldGet = function (receiver, state, kind, f) {
+     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+diff --git a/node_modules/@dicebear/core/lib/Style.js b/node_modules/@dicebear/core/lib/Style.js
+index 08fa585..3384df6 100644
+--- a/node_modules/@dicebear/core/lib/Style.js
++++ b/node_modules/@dicebear/core/lib/Style.js
+@@ -1,10 +1,10 @@
+-var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
++var __classPrivateFieldSet = function (receiver, state, value, kind, f) {
+     if (kind === "m") throw new TypeError("Private method is not writable");
+     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
+     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
+     return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
+ };
+-var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
++var __classPrivateFieldGet = function (receiver, state, kind, f) {
+     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+diff --git a/node_modules/@dicebear/core/lib/Style/Canvas.js b/node_modules/@dicebear/core/lib/Style/Canvas.js
+index 2016543..4a3d46c 100644
+--- a/node_modules/@dicebear/core/lib/Style/Canvas.js
++++ b/node_modules/@dicebear/core/lib/Style/Canvas.js
+@@ -1,10 +1,10 @@
+-var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
++var __classPrivateFieldSet = function (receiver, state, value, kind, f) {
+     if (kind === "m") throw new TypeError("Private method is not writable");
+     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
+     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
+     return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
+ };
+-var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
++var __classPrivateFieldGet = function (receiver, state, kind, f) {
+     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+diff --git a/node_modules/@dicebear/core/lib/Style/Color.js b/node_modules/@dicebear/core/lib/Style/Color.js
+index 0ede4cf..821c922 100644
+--- a/node_modules/@dicebear/core/lib/Style/Color.js
++++ b/node_modules/@dicebear/core/lib/Style/Color.js
+@@ -1,10 +1,10 @@
+-var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
++var __classPrivateFieldSet = function (receiver, state, value, kind, f) {
+     if (kind === "m") throw new TypeError("Private method is not writable");
+     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
+     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
+     return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
+ };
+-var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
++var __classPrivateFieldGet = function (receiver, state, kind, f) {
+     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+diff --git a/node_modules/@dicebear/core/lib/Style/Component.js b/node_modules/@dicebear/core/lib/Style/Component.js
+index 28830ad..b546008 100644
+--- a/node_modules/@dicebear/core/lib/Style/Component.js
++++ b/node_modules/@dicebear/core/lib/Style/Component.js
+@@ -1,10 +1,10 @@
+-var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
++var __classPrivateFieldSet = function (receiver, state, value, kind, f) {
+     if (kind === "m") throw new TypeError("Private method is not writable");
+     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
+     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
+     return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
+ };
+-var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
++var __classPrivateFieldGet = function (receiver, state, kind, f) {
+     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+diff --git a/node_modules/@dicebear/core/lib/Style/ComponentTranslate.js b/node_modules/@dicebear/core/lib/Style/ComponentTranslate.js
+index d01647e..2440f3e 100644
+--- a/node_modules/@dicebear/core/lib/Style/ComponentTranslate.js
++++ b/node_modules/@dicebear/core/lib/Style/ComponentTranslate.js
+@@ -1,10 +1,10 @@
+-var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
++var __classPrivateFieldSet = function (receiver, state, value, kind, f) {
+     if (kind === "m") throw new TypeError("Private method is not writable");
+     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
+     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
+     return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
+ };
+-var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
++var __classPrivateFieldGet = function (receiver, state, kind, f) {
+     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+diff --git a/node_modules/@dicebear/core/lib/Style/ComponentVariant.js b/node_modules/@dicebear/core/lib/Style/ComponentVariant.js
+index 0230325..3a971db 100644
+--- a/node_modules/@dicebear/core/lib/Style/ComponentVariant.js
++++ b/node_modules/@dicebear/core/lib/Style/ComponentVariant.js
+@@ -1,10 +1,10 @@
+-var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
++var __classPrivateFieldSet = function (receiver, state, value, kind, f) {
+     if (kind === "m") throw new TypeError("Private method is not writable");
+     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
+     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
+     return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
+ };
+-var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
++var __classPrivateFieldGet = function (receiver, state, kind, f) {
+     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+diff --git a/node_modules/@dicebear/core/lib/Style/Element.js b/node_modules/@dicebear/core/lib/Style/Element.js
+index 309c390..9cc3914 100644
+--- a/node_modules/@dicebear/core/lib/Style/Element.js
++++ b/node_modules/@dicebear/core/lib/Style/Element.js
+@@ -1,10 +1,10 @@
+-var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
++var __classPrivateFieldSet = function (receiver, state, value, kind, f) {
+     if (kind === "m") throw new TypeError("Private method is not writable");
+     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
+     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
+     return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
+ };
+-var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
++var __classPrivateFieldGet = function (receiver, state, kind, f) {
+     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+diff --git a/node_modules/@dicebear/core/lib/Style/Meta.js b/node_modules/@dicebear/core/lib/Style/Meta.js
+index 190a51d..83de359 100644
+--- a/node_modules/@dicebear/core/lib/Style/Meta.js
++++ b/node_modules/@dicebear/core/lib/Style/Meta.js
+@@ -1,10 +1,10 @@
+-var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
++var __classPrivateFieldSet = function (receiver, state, value, kind, f) {
+     if (kind === "m") throw new TypeError("Private method is not writable");
+     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
+     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
+     return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
+ };
+-var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
++var __classPrivateFieldGet = function (receiver, state, kind, f) {
+     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+diff --git a/node_modules/@dicebear/core/lib/Style/MetaCreator.js b/node_modules/@dicebear/core/lib/Style/MetaCreator.js
+index 95cb00a..47bd92b 100644
+--- a/node_modules/@dicebear/core/lib/Style/MetaCreator.js
++++ b/node_modules/@dicebear/core/lib/Style/MetaCreator.js
+@@ -1,10 +1,10 @@
+-var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
++var __classPrivateFieldSet = function (receiver, state, value, kind, f) {
+     if (kind === "m") throw new TypeError("Private method is not writable");
+     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
+     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
+     return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
+ };
+-var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
++var __classPrivateFieldGet = function (receiver, state, kind, f) {
+     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+diff --git a/node_modules/@dicebear/core/lib/Style/MetaLicense.js b/node_modules/@dicebear/core/lib/Style/MetaLicense.js
+index d94b360..d13739c 100644
+--- a/node_modules/@dicebear/core/lib/Style/MetaLicense.js
++++ b/node_modules/@dicebear/core/lib/Style/MetaLicense.js
+@@ -1,10 +1,10 @@
+-var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
++var __classPrivateFieldSet = function (receiver, state, value, kind, f) {
+     if (kind === "m") throw new TypeError("Private method is not writable");
+     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
+     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
+     return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
+ };
+-var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
++var __classPrivateFieldGet = function (receiver, state, kind, f) {
+     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+diff --git a/node_modules/@dicebear/core/lib/Style/MetaSource.js b/node_modules/@dicebear/core/lib/Style/MetaSource.js
+index cb3a622..6b337e6 100644
+--- a/node_modules/@dicebear/core/lib/Style/MetaSource.js
++++ b/node_modules/@dicebear/core/lib/Style/MetaSource.js
+@@ -1,10 +1,10 @@
+-var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
++var __classPrivateFieldSet = function (receiver, state, value, kind, f) {
+     if (kind === "m") throw new TypeError("Private method is not writable");
+     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
+     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
+     return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
+ };
+-var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
++var __classPrivateFieldGet = function (receiver, state, kind, f) {
+     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+diff --git a/node_modules/@dicebear/core/lib/Utils/Color.js b/node_modules/@dicebear/core/lib/Utils/Color.js
+index cc72e97..5112c52 100644
+--- a/node_modules/@dicebear/core/lib/Utils/Color.js
++++ b/node_modules/@dicebear/core/lib/Utils/Color.js
+@@ -1,4 +1,4 @@
+-var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
++var __classPrivateFieldGet = function (receiver, state, kind, f) {
+     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+diff --git a/node_modules/@dicebear/core/lib/Utils/Xml.js b/node_modules/@dicebear/core/lib/Utils/Xml.js
+index fecbf8e..37b8a05 100644
+--- a/node_modules/@dicebear/core/lib/Utils/Xml.js
++++ b/node_modules/@dicebear/core/lib/Utils/Xml.js
+@@ -1,4 +1,4 @@
+-var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
++var __classPrivateFieldGet = function (receiver, state, kind, f) {
+     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);

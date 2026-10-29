@@ -208,7 +208,7 @@ function JoinScreen({ net, guest, onBack, onCode }: { net: Net; guest: Guest; on
             <div>
               <div>{t.name}</div>
               <div className="muted small">
-                {stakes(t)} · {t.seated} of {t.max} seated
+                Blinds {stakes(t)} · {t.seated} of {t.max} seated
               </div>
             </div>
             <button className="btn btn-primary" disabled={t.seated >= t.max} onClick={() => guest.join(id)}>

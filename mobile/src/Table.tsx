@@ -173,9 +173,11 @@ export function Table({ v, c }: { v: TableView; c: Controls }) {
         </Pressable>
         <View style={{ flex: 1 }}>
           <Text style={T.caps} numberOfLines={1}>
-            {v.name} · {v.seats.filter(Boolean).length} of {MAX_SEATS} seated{live === 2 && v.street !== 'idle' ? ' · heads up' : ''}
+            Blinds {stakes(v)} · {v.seats.filter(Boolean).length} of {MAX_SEATS} seated{live === 2 && v.street !== 'idle' ? ' · heads up' : ''}
           </Text>
-          <Text style={[T.text, { fontSize: 22, marginTop: 2 }]}>{stakes(v)}</Text>
+          <Text style={[T.text, { fontSize: 22, marginTop: 2 }]} numberOfLines={1}>
+            {v.name}
+          </Text>
         </View>
         {me && !me.sittingOut && me.stack > 0 && <Chip onPress={() => c.sit(true)}>Sit out</Chip>}
       </View>
@@ -207,11 +209,11 @@ export function Table({ v, c }: { v: TableView; c: Controls }) {
       {me && (
         <View style={[st.row, { gap: 14, alignItems: 'stretch' }]}>
           <View style={{ flex: 1 }} {...swipe.panHandlers}>
-            <View style={st.row}>
+            <View style={[st.row, !v.hole.length && { flex: 1, justifyContent: 'center' }]}>
               {v.hole.length ? (
                 v.hole.map((card, k) => <PlayingCard key={card} card={card} big style={[{ width: '62%' }, k ? st.overlap : null]} />)
               ) : (
-                <Text style={T.muted}>No cards this hand</Text>
+                <Text style={[T.muted, { textAlign: 'center' }]}>No cards yet</Text>
               )}
             </View>
             {myTurn ? <Text style={[T.muted, { textAlign: 'center', marginTop: 8 }]}>↑ Swipe up to fold</Text> : null}
