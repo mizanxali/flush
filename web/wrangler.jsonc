@@ -1,0 +1,12 @@
+{
+  "name": "flush",
+  "compatibility_date": "2026-11-09",
+  "assets": {
+    "directory": "./dist",
+    // sw.js precaches /index.html and serves it to navigations. The default handling 307s that
+    // path to /, and a service worker can't answer a navigation with a redirected response.
+    "html_handling": "none",
+    // With html_handling off, this is what serves index.html at /.
+    "not_found_handling": "single-page-application"
+  }
+}
